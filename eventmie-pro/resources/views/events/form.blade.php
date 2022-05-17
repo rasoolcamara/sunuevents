@@ -24,7 +24,7 @@
                             
                             <div class="tab-content lgx-tab-content lgx-tab-content-event">
                                 <router-view 
-                                    :is_admin="{{ json_encode(Auth::user()->hasRole('admin'))}}"
+                                    :is_admin="{{ json_encode(Auth::user()->hasRole('admin')) }}"
                                     :organisers="{{ json_encode($organisers, JSON_HEX_APOS) }}" 
                                     :organiser_id="{{$organiser_id}}"
                                     :event_ck="{{ json_encode($event, JSON_HEX_APOS) }}"

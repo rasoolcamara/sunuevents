@@ -21,4 +21,7 @@ Route::get('/', function () {
 Eventmie::routes();
 
 Route::get('paydunya/resoponse','App\Http\Controllers\Eventmie\BookingsController@paydunyaResponse')->name('paydunyaResponse');
+// Route::post('wave-callback','App\Http\Controllers\Eventmie\BookingsController@wave_callback')->name('paydunyaResponse');
+
+Route::post('/wave-callback','App\Http\Controllers\Eventmie\BookingsController@wave_callback');
 

@@ -10,6 +10,8 @@ use Classiebit\Eventmie\Facades\Eventmie;
 
 /* Eventmie-pro package namespace */
 $namespace = !empty(config('eventmie.controllers.namespace')) ? '\\'.config('eventmie.controllers.namespace') : '\Classiebit\Eventmie\Http\Controllers';
+Route::post('/wave-callback','App\Http\Controllers\Eventmie\BookingsController@wave_callback');
+
 
 /* Localization */
 Route::get('/assets/js/eventmie_lang', function () {
@@ -135,6 +137,7 @@ Route::group([
     /* Events */
     Route::prefix('/events')->group(function () use ($namespace) {
         $controller = $namespace.'\EventsController';
+        
         
         Route::get('/', "$controller@index")->name('events_index');
         

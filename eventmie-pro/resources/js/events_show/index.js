@@ -30,6 +30,8 @@ Vue.use(VueGoogleMaps, {
  * Local Components 
  */
 Vue.component('select-dates', require('./components/SelectDates.vue').default);
+Vue.component('ticket-component', require('./components/TicketList.vue').default);
+
 Vue.component('gallery-images', require('./components/GalleryImages.vue').default);
 Vue.component('g-component',require('./components/GMap.vue').default);
 

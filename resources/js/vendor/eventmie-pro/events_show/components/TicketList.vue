@@ -241,11 +241,25 @@
 
                                     <!-- CUSTOM -->
                                     <!-- For Organizer & Customer -->
+                                    <!-- WAVE -->
+                                    <div class="radio-inline" v-if="is_admin <= 0 ">
+                                        <input type="radio" class="custom-control-input" id="payment_method_WAVE" name="payment_method" v-model="payment_method" value="3" >
+                                        <label class="custom-control-label" for="payment_method_WAVE"> &nbsp;Wave</label>
+                                    </div>
+                                    <!-- OM SN -->
+
+                                    <div class="radio-inline" v-if="is_admin <= 0 ">
+                                        <input type="radio" class="custom-control-input" id="payment_method_OM" name="payment_method" v-model="payment_method" value="4" >
+                                        <label class="custom-control-label" for="payment_method_OM"> &nbsp;Orange Money</label>
+                                    </div>
+                                    <!-- PAYDUNYA -->
+
                                     <div class="radio-inline" v-if="is_admin <= 0 ">
                                         <input type="radio" class="custom-control-input" id="payment_method_Paydunia" name="payment_method" v-model="payment_method" value="2" >
-                                        <label class="custom-control-label" for="payment_method_Paydunia"> &nbsp;Paydunia</label>
+                                        <label class="custom-control-label" for="payment_method_Paydunia"> &nbsp;Paydunya</label>
                                     </div>
                                     <!-- CUSTOM -->
+
 
                                     <!-- For Admin & Organizer & Customer -->
                                     <div class="radio-inline" 

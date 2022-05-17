@@ -922,5 +922,4 @@ class BookingsController extends Controller
         return redirect()->route('eventmie.register_show');
     }
 
-
 }
