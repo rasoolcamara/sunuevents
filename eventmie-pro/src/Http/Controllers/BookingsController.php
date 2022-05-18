@@ -30,7 +30,7 @@ class BookingsController extends Controller
         $this->middleware('common');
     
         // authenticate except 
-        $this->middleware('auth')->except(['login_first', 'signup_first']);
+        $this->middleware('auth')->except(['login_first', 'signup_first', 'wave-callback']);
 
         $this->event        = new Event;
         $this->ticket       = new Ticket;
@@ -921,5 +921,4 @@ class BookingsController extends Controller
 
         return redirect()->route('eventmie.register_show');
     }
-
 }

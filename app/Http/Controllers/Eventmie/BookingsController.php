@@ -475,10 +475,4 @@ class BookingsController extends BaseBookingsController
             return $this->paypal($order, setting('regional.currency_default'));
         }    
     }
-
-    public function wave_callback(Request $request)
-    {
-        logger("Le callback de wave");
-        logger($request->all());
-    }
 }

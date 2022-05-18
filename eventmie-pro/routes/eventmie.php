@@ -10,7 +10,6 @@ use Classiebit\Eventmie\Facades\Eventmie;
 
 /* Eventmie-pro package namespace */
 $namespace = !empty(config('eventmie.controllers.namespace')) ? '\\'.config('eventmie.controllers.namespace') : '\Classiebit\Eventmie\Http\Controllers';
-Route::post('/wave-callback','App\Http\Controllers\Eventmie\BookingsController@wave_callback');
 
 
 /* Localization */
@@ -40,6 +39,7 @@ Auth::routes();
 // Login
 Route::get('login', $namespace.'\Auth\LoginController@showLoginForm')->name('eventmie.login');
 Route::post('login', $namespace.'\Auth\LoginController@login')->name('eventmie.login_post');
+
 
 // Logout
 Route::match(['get', 'post'], '/logout', $namespace.'\EventmieController@logout')->name('eventmie.logout');
