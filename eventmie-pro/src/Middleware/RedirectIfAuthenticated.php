@@ -21,7 +21,6 @@ class RedirectIfAuthenticated
             $redirect = !empty(config('eventmie.route.prefix')) ? config('eventmie.route.prefix') : '/';
             return redirect($redirect);
         }
-
         return $next($request);
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CallbackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::post('/wave-callback', [CallbackController::class, 'wave_callback']);
+
+Route::post('/omsenegal-callback', [CallbackController::class, 'om_senegal_callback']);
+
+
