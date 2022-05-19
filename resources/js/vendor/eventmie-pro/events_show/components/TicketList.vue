@@ -622,7 +622,7 @@ export default {
             // if not admin
             // total > 0
             if(this.is_admin <= 0 && this.bookedTicketsTotal() > 0)
-                this.payment_method = 2;
+                this.payment_method = 3;
         },
 
         loginFirst() {

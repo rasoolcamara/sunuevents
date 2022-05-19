@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Auth;
 use Classiebit\Eventmie\Models\Event;
+use Illuminate\Support\Facades\Http;
 use Paydunya\Setup;
 use Paydunya\Checkout\Store;
 use Throwable;
@@ -227,6 +228,8 @@ class BookingsController extends BaseBookingsController
             
             'price_title'       => '',
             'price_tagline'     => '',
+            'quantity'          => 1,
+
         ];
 
         $total_price   = 0;
@@ -235,6 +238,8 @@ class BookingsController extends BaseBookingsController
         {
             $order['price_title']   .= ' | '.$val['ticket_title'].' | ';
             $order['price_tagline'] .= ' | '.$val['quantity'].' | ';
+            $order['quantity']       = $val['quantity'];
+
             $total_price            += $val['net_price'];
         }
         
@@ -367,6 +372,7 @@ class BookingsController extends BaseBookingsController
         \Paydunya\Checkout\Store::setCallbackUrl(route('paydunyaResponse'));
         \Paydunya\Checkout\Store::setReturnUrl(route('paydunyaResponse'));
     }
+
     /**
      *  payment request
      */
@@ -391,7 +397,6 @@ class BookingsController extends BaseBookingsController
         {
             return response()->json(['status' => false, 'message' => $th->getMessage()]);
         }
-        
     }
 
     /**
@@ -467,6 +472,16 @@ class BookingsController extends BaseBookingsController
             return $this->paydunyaRequest($order, setting('regional.currency_default'));
             
         }
+        else if($payment_method == 3)
+        {
+            return $this->waveRequest($order, setting('regional.currency_default'));
+            
+        }
+        else if($payment_method == 4)
+        {
+            return $this->omsenegalRequest($order, setting('regional.currency_default'));
+            
+        }
         else
         {
             if(empty(setting('apps.paypal_secret')) || empty(setting('apps.paypal_client_id')))
@@ -475,4 +490,66 @@ class BookingsController extends BaseBookingsController
             return $this->paypal($order, setting('regional.currency_default'));
         }    
     }
+
+    /**
+     *  payment request
+     */
+    public function waveRequest($order = [], $currency = 'XOF')
+    {
+        // $event_title    = session('payment_method')['event_title'];
+        try
+        {
+            /* $invoice = new \Paydunya\Checkout\CheckoutInvoice();
+        
+            $invoice->addItem($event_title, 1, $order['price'], $order['price']);
+            $invoice->setDescription($event_title);
+            $invoice->setTotalAmount($order['price']);
+            $invoice->create(); */
+
+            logger($order);
+            logger($order['quantity']);
+
+            $url = 'https://api.wave.com/v1/checkout/sessions';
+
+            $response = Http::withHeaders([
+                'Content-Type'  =>'application/json',
+                'Authorization' => 'Bearer wave_sn_test_KDR7FXgVJjCFd7LSecKSerLhWiwTKpwDK2Oz03F9NNf-jqk6otb56FZfWccO4KisektIx-7JyyO1E5iCrBKKCMaSZB2H8pYx8w'
+            ])->post($url, [
+                "amount"        => "20", //$order['price']
+                "currency"      => "XOF",
+                "error_url"     => "https://example.com/error", // route('paydunyaResponse')
+                "success_url"   => "https://example.com/success" // route('paydunyaResponse')
+            ]);
+
+            $body = $response->json();
+            logger($body);
+
+            $response = json_decode($response->getBody()->getContents());
+
+            if(isset($body['code']))
+                return response()->json(['status' => false, 'message' => $body['message']]);
+
+            return response()->json(['status' => true, 'url' => $body['wave_launch_url']]);
+        }
+        catch(\Throwable $th)
+        {
+            return response()->json(['status' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    /**
+     *  payment request
+     */
+    public function omsenegalRequest($order = [], $currency = 'FCFA')
+    {
+        try
+        {
+            // return response()->json(['status' => true, 'url' => $body['wave_launch_url']]);
+        }
+        catch(\Throwable $th)
+        {
+            // return response()->json(['status' => false, 'message' => $th->getMessage()]);
+        }
+    }
+    
 }

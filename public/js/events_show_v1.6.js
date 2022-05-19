@@ -3850,7 +3850,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     defaultPaymentMethod: function defaultPaymentMethod() {
       // if not admin
       // total > 0
-      if (this.is_admin <= 0 && this.bookedTicketsTotal() > 0) this.payment_method = 2;
+      if (this.is_admin <= 0 && this.bookedTicketsTotal() > 0) this.payment_method = 3;
     },
     loginFirst: function loginFirst() {
       window.location.href = route('eventmie.login_first');
