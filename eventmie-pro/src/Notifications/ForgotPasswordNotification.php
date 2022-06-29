@@ -21,9 +21,18 @@ class ForgotPasswordNotification extends Notification
         return ['mail'];
     }
 
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
     public function toMail($notifiable)
     {   
         $reset_link = route('eventmie.password.reset',['token' => $this->token]);
+        logger("WE HERE");
+        logger($reset_link);
+
         return (new MailMessage)
             ->line('You are receiving this email because we received a password reset request for your account.')
             ->action('Reset Password', $reset_link)

@@ -19,5 +19,3 @@ use Illuminate\Support\Facades\Route;
 Route::post('/wave-callback', [CallbackController::class, 'wave_callback'])->name('wave_callback');
 
 Route::post('/omsenegal-callback', [CallbackController::class, 'om_senegal_callback']);
-
-

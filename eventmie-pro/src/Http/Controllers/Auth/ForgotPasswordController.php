@@ -51,10 +51,20 @@ class ForgotPasswordController extends Controller
         $this->validate($request, ['email' => 'required|email']);
         
         try {
+            logger("MAILING");
+            logger($request);
+
             $response = $this->broker()->sendResetLink(
                 $request->only('email')
             );
-        } catch (\Throwable $th) {}
+
+            logger($response);
+
+        } catch (\Throwable $th) {
+            logger("MAILING FAILED");
+
+            logger($th);
+        }
 
         return back()->with('status', __('eventmie-pro::em.reset_email_info'));
     }

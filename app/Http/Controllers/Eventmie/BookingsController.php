@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Auth;
+use Classiebit\Eventmie\Models\Booking;
 use Classiebit\Eventmie\Models\Event;
+use Classiebit\Eventmie\Models\Transaction;
 use Illuminate\Support\Facades\Http;
 use Paydunya\Setup;
 use Paydunya\Checkout\Store;
@@ -225,11 +227,9 @@ class BookingsController extends BaseBookingsController
             'item_sku'          => $booking[key($booking)]['item_sku'],
             'order_number'      => time().rand(1,988),
             'product_title'     => $booking[key($booking)]['event_title'],
-            
             'price_title'       => '',
             'price_tagline'     => '',
-            'quantity'          => 1,
-
+            // 'quantity'          => 1,
         ];
 
         $total_price   = 0;
@@ -238,7 +238,7 @@ class BookingsController extends BaseBookingsController
         {
             $order['price_title']   .= ' | '.$val['ticket_title'].' | ';
             $order['price_tagline'] .= ' | '.$val['quantity'].' | ';
-            $order['quantity']       = $val['quantity'];
+            // $order['quantity']       = $val['quantity'];
 
             $total_price            += $val['net_price'];
         }
@@ -263,14 +263,14 @@ class BookingsController extends BaseBookingsController
     protected function finish_checkout($flag = [])
     {
         // prepare data to insert into table
-        $data                   = session('pre_payment');
+        $data  = session('pre_payment');
         // unset extra columns
         unset($data['product_title']);
         unset($data['price_title']);
         unset($data['price_tagline']);
         
 
-        $booking                = session('booking');
+        $booking = session('booking');
         
         // IMPORTANT!!! clear session data setted during checkout process
         // session()->forget(['pre_payment', 'booking']);
@@ -293,7 +293,9 @@ class BookingsController extends BaseBookingsController
         if(Auth::user()->hasRole('admin'))
             $url = route('voyager.bookings.index');
 
-        // if success 
+        ///
+        /// if success 
+
         if($flag['status'])
         {
             $data['txn_id']             = $flag['transaction_id'];
@@ -414,12 +416,10 @@ class BookingsController extends BaseBookingsController
 
             if($invoice->confirm($token)) 
             {
-
                 $flag['status']             = true;
                 $flag['transaction_id']     = $invoice->transaction_id; // transation_id
                 $flag['payer_reference']    = $invoice->getCustomerInfo('email');                 
                 $flag['message']            = $invoice->getStatus(); // outcome message
-            
             }
             else
             {
@@ -427,7 +427,6 @@ class BookingsController extends BaseBookingsController
                 $flag['error']              = $invoice->getStatus();
             }
         }
-
         // All Exception Handling like error card number
         catch (\Throwable $th)
         {
@@ -499,40 +498,82 @@ class BookingsController extends BaseBookingsController
         // $event_title    = session('payment_method')['event_title'];
         try
         {
-            /* $invoice = new \Paydunya\Checkout\CheckoutInvoice();
-        
-            $invoice->addItem($event_title, 1, $order['price'], $order['price']);
-            $invoice->setDescription($event_title);
-            $invoice->setTotalAmount($order['price']);
-            $invoice->create(); */
-
-            logger($order);
-            logger($order['quantity']);
-
             $url = 'https://api.wave.com/v1/checkout/sessions';
 
             $response = Http::withHeaders([
-                'Content-Type'  =>'application/json',
-                'Authorization' => 'Bearer wave_sn_test_KDR7FXgVJjCFd7LSecKSerLhWiwTKpwDK2Oz03F9NNf-jqk6otb56FZfWccO4KisektIx-7JyyO1E5iCrBKKCMaSZB2H8pYx8w'
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer wave_sn_prod_a0NVjFwZbobr_t5aPnfgR76tOv22ApBAiMo5U9D7T27SOgHWBd0munUrFsw-0bENBdAqOzfdTsu2TSRVakhzI0O_Bt0HVbIOjQ',
+                // 'Authorization' => 'Bearer wave_sn_prod_CN1R1ZFFStIJR3QuvKa1X1mYEqOKCKV2Gr1oPSXYSe3RUyebTvbrtjJcerYaARuu0XXObFs3jO-sQyWJiAvWN-8rIL369n4enw',
+                // 'Authorization' => 'Bearer wave_sn_test_KDR7FXgVJjCFd7LSecKSerLhWiwTKpwDK2Oz03F9NNf-jqk6otb56FZfWccO4KisektIx-7JyyO1E5iCrBKKCMaSZB2H8pYx8w',
+                // 'Authorization' => 'Bearer wave_sn_prod_1Wd7rR4b1XD99dItFYf3lyV0VRzEQWjPxOTJAz7CIg8k_BUUqzaqkFxVv_AGWHAFnoow_KnQ6YFxeW3PMAUKx2RthBnuLnRESg',
             ])->post($url, [
-                "amount"        => "20", //$order['price']
+                "amount"        => 200,// $order['price'],
                 "currency"      => "XOF",
-                "error_url"     => "https://example.com/error", // route('paydunyaResponse')
-                "success_url"   => "https://example.com/success" // route('paydunyaResponse')
+                "error_url"     => "https://sunuevents.sn/wave-return-url",
+                "success_url"   => "https://sunuevents.sn/wave-return-url"
             ]);
 
             $body = $response->json();
-            logger($body);
 
             $response = json_decode($response->getBody()->getContents());
 
-            if(isset($body['code']))
+            if(isset($body['code'])) {
                 return response()->json(['status' => false, 'message' => $body['message']]);
+            }
+
+            // prepare data to insert into table
+            $data  = session('pre_payment');
+            // unset extra columns
+            unset($data['product_title']);
+            unset($data['price_title']);
+            unset($data['price_tagline']);
+
+            $booking = session('booking');
+            logger("body & flag");
+            
+            // IMPORTANT!!! clear session data setted during checkout process
+            // session()->forget(['pre_payment', 'booking']);
+            
+            /* CUSTOM */
+            $payment_method         = (int)session('payment_method')['payment_method'];
+
+            // IMPORTANT!!! clear session data setted during checkout process
+            session()->forget(['pre_payment', 'booking', 'payment_method']);
+
+            $flag   = [];
+        
+            $flag['status']             = true;
+            $flag['transaction_id']     = $body['id'];
+            $flag['payer_reference']    = $body['business_name'];               
+            $flag['message']            = $body['checkout_status'];
+
+            ///
+            $data['txn_id']             = $flag['transaction_id'];
+            $data['amount_paid']        = $data['price'];
+            unset($data['price']);
+            $data['payment_status']     = $flag['message'];
+            $data['payer_reference']    = $flag['payer_reference'];
+            $data['status']             = 0;
+            $data['created_at']         = Carbon::now();
+            $data['updated_at']         = Carbon::now();
+            $data['currency_code']      = setting('regional.currency_default');
+            $data['payment_gateway']    = 'WAVE';
+            // insert data of paypaltra nsaction_id into transaction table
+            logger("body & flag");
+            logger($data);
+            $flag                       = $this->transaction->add_transaction($data);
+            $data['transaction_id']     = $flag;
+            $flag = $this->finish_booking($booking, $data);
+
+            ///
 
             return response()->json(['status' => true, 'url' => $body['wave_launch_url']]);
-        }
+        } 
         catch(\Throwable $th)
         {
+            logger($th);
+            logger("th");
+
             return response()->json(['status' => false, 'message' => $th->getMessage()]);
         }
     }
@@ -544,12 +585,13 @@ class BookingsController extends BaseBookingsController
     {
         try
         {
-            // return response()->json(['status' => true, 'url' => $body['wave_launch_url']]);
+            // return response()->json(['status' => true, 'url' => "http://sunuevents.test"]);
         }
         catch(\Throwable $th)
         {
             // return response()->json(['status' => false, 'message' => $th->getMessage()]);
         }
     }
+
     
 }

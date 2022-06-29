@@ -42,6 +42,7 @@ class MailNotification extends Notification implements ShouldQueue
         // if mail creds not set then send only database notifications
         return [CustomDb::class];
     }
+    
 
     /**
      * Get the mail representation of the notification.
@@ -58,6 +59,7 @@ class MailNotification extends Notification implements ShouldQueue
                     'extra_lines'=>$this->extra_lines,
                 ]);
     }
+
 
     /**
      * Get the array representation of the notification.

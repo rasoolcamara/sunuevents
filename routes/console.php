@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\User;
+use App\Notifications\TestMailNotification;
+use Classiebit\Eventmie\Notifications\ForgotPasswordNotification;
+use Classiebit\Eventmie\Notifications\MailNotification;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,3 +21,12 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('notif', function () {
+    $user = User::find(203);
+    logger('jkdsnfs');
+    $token = 'zU7M0cDB2w67bOrHizv2SdCfFPkA1PoLDpLPJCZI';
+    // return new TestMailNotification()->toMail($user);
+    $user->notify(new TestMailNotification());
+    logger('jkdsnfs');
+})->purpose('Testing mailing notification');

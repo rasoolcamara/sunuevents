@@ -86,7 +86,10 @@ class User extends \TCG\Voyager\Models\User  implements MustVerifyEmail
         //forgot password notification
         try {
             $this->notify(new ForgotPasswordNotification($token));
-        } catch (\Throwable $th) {}
+        } catch (\Throwable $th) {
+            logger("ERROOOORRR");
+            logger($th);
+        }
         // ====================== Notification ====================== 
     }
 

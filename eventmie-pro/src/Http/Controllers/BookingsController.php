@@ -27,10 +27,10 @@ class BookingsController extends Controller
     public function __construct()
     {
         // language change
-        $this->middleware('common');
+        // $this->middleware('common');
     
-        // authenticate except 
-        $this->middleware('auth')->except(['login_first', 'signup_first', 'wave-callback']);
+        // // authenticate except 
+        // $this->middleware('auth')->except(['login_first', 'signup_first', 'wave-callback']);
 
         $this->event        = new Event;
         $this->ticket       = new Ticket;

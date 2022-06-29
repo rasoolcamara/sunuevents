@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CallbackController;
 use Classiebit\Eventmie\Facades\Eventmie;
 
 /*
@@ -11,6 +12,7 @@ use Classiebit\Eventmie\Facades\Eventmie;
 /* Eventmie-pro package namespace */
 $namespace = !empty(config('eventmie.controllers.namespace')) ? '\\'.config('eventmie.controllers.namespace') : '\Classiebit\Eventmie\Http\Controllers';
 
+Route::get('wave-return-url', [CallbackController::class, 'waveResponse'])->name('return_url');
 
 /* Localization */
 Route::get('/assets/js/eventmie_lang', function () {

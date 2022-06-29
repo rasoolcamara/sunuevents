@@ -198,8 +198,7 @@
                         :tickets="{{ json_encode($tickets, JSON_HEX_APOS) }}"
                         :booked_tickets="{{ json_encode($booked_tickets, JSON_HEX_APOS) }}"
                         :currency="{{ json_encode($currency, JSON_HEX_APOS) }}"
-                        :total_capacity="{{ $total_capacity }}"
-                    >
+                        :total_capacity="{{ $total_capacity }}">
                     </select-dates>
                 </div>
                 <!--//.ROW-->
