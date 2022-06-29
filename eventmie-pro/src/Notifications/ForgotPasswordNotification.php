@@ -36,12 +36,12 @@ class ForgotPasswordNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toDatabase($notifiable)
+   /* public function toDatabase($notifiable)
     {
         return [
             'notification'  => 'Forgot Password',
             'n_type'        => 'forgot_password',
         ];
         
-    }
+    }*/
 }

@@ -3618,6 +3618,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3636,10 +3650,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       total: 0,
       disable: false,
       payment_method: 'offline',
+      om_config: {
+        identifiant: null,
+        site: null,
+        dateh: null,
+        algo: null,
+        ref_commande: null,
+        total: null,
+        commande: null,
+        hmac: null
+      },
       // customers options
       options: [],
       //selected customer
       customer: null
+      /* wave: require('../../../../../../public/images/wave.png'),*/
+
     };
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(['booking_date', 'start_time', 'end_time', 'booking_end_date', 'booked_date_server'])),
@@ -3697,6 +3723,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }, 1000);
         }
 
+        if (res.data.status && res.data.om_config != '') {
+          _this2.om_config.identifiant = res.data.om_config.identifiant;
+          _this2.om_config.site = res.data.om_config.site;
+          _this2.om_config.dateh = res.data.om_config.dateh;
+          _this2.om_config.total = res.data.om_config.total;
+          _this2.om_config.ref_commande = res.data.om_config.ref_commande;
+          _this2.om_config.algo = res.data.om_config.algo;
+          _this2.om_config.commande = res.data.om_config.commande;
+          _this2.om_config.hmac = res.data.om_config.hmac;
+          return res;
+        }
+
         if (!res.data.status && res.data.message != '' && typeof res.data.message != "undefined") {
           // hide loader
           Swal.hideLoading(); // close popup
@@ -3704,6 +3742,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this2.close();
 
           _this2.showNotification('error', res.data.message);
+        }
+      }).then(function (res) {
+        if (res.data.status && res.data.om_config) {
+          _this2.$refs.form_om.submit();
         }
       })["catch"](function (error) {
         _this2.disable = false;
@@ -3850,7 +3892,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     defaultPaymentMethod: function defaultPaymentMethod() {
       // if not admin
       // total > 0
-      if (this.is_admin <= 0 && this.bookedTicketsTotal() > 0) this.payment_method = 2;
+      if (this.is_admin <= 0 && this.bookedTicketsTotal() > 0) this.payment_method = 3;
     },
     loginFirst: function loginFirst() {
       window.location.href = route('eventmie.login_first');
@@ -3877,7 +3919,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         promise.then(function (successMessage) {
           loading(false);
         }, function (errorMessage) {
-          //error handler function is invoked 
+          //error handler function is invoked
           console.log(errorMessage);
         });
       })["catch"](function (error) {
@@ -3913,7 +3955,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.totalPrice();
       this.orderTotal();
     },
-    // active when customer search 
+    // active when customer search
     customer: function customer() {
       this.customer_id = this.customer != null ? this.customer.id : null;
     }
@@ -6456,6 +6498,51 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/vendor/blueimp-gallery/video-play.svg?15116d1813411752ecd73aee05ffe43e");
+
+/***/ }),
+
+/***/ "./public/images/orange_money.png":
+/*!****************************************!*\
+  !*** ./public/images/orange_money.png ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/orange_money.png?c7e074d76f4d36012baac9a80efa4e9b");
+
+/***/ }),
+
+/***/ "./public/images/visa_mastercard.png":
+/*!*******************************************!*\
+  !*** ./public/images/visa_mastercard.png ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/visa_mastercard.png?5ad1e9721d4b24cccb1dc8cd4cc648e9");
+
+/***/ }),
+
+/***/ "./public/images/wave.png":
+/*!********************************!*\
+  !*** ./public/images/wave.png ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/wave.png?298f0519bfeecc6dc3898154ea3e54e7");
 
 /***/ }),
 
@@ -65171,7 +65258,7 @@ var render = function() {
                               _vm.event.repetitive > 0
                                 ? _c("p", { staticClass: "mb-2" }, [
                                     _vm._v(
-                                      "\n                                            " +
+                                      "\n                      " +
                                         _vm._s(_vm.booking_date) +
                                         " "
                                     ),
@@ -65179,18 +65266,18 @@ var render = function() {
                                     _vm._v(" "),
                                     _c("br"),
                                     _vm._v(
-                                      "\n                                            " +
+                                      "\n                      " +
                                         _vm._s(
                                           _vm.booking_end_date != null
                                             ? _vm.booking_end_date
                                             : _vm.booking_date
                                         ) +
-                                        "\n                                        "
+                                        "\n                    "
                                     )
                                   ])
                                 : _c("p", { staticClass: "mb-2" }, [
                                     _vm._v(
-                                      "\n                                            " +
+                                      "\n                      " +
                                         _vm._s(
                                           _vm.changeDateFormat(
                                             _vm.moment(
@@ -65207,7 +65294,7 @@ var render = function() {
                                     _vm._v(" "),
                                     _c("br"),
                                     _vm._v(
-                                      "\n                                            " +
+                                      "\n                      " +
                                         _vm._s(
                                           _vm.changeDateFormat(
                                             _vm.moment(
@@ -65218,7 +65305,7 @@ var render = function() {
                                             )
                                           )
                                         ) +
-                                        " \n                                        "
+                                        "\n                    "
                                     )
                                   ]),
                               _vm._v(" "),
@@ -65332,7 +65419,7 @@ var render = function() {
                                           _c("p", [
                                             _vm._v(
                                               _vm._s(tax.title) +
-                                                " \n                                                    "
+                                                "\n                          "
                                             ),
                                             _c("small", [
                                               _vm._v(
@@ -65532,7 +65619,7 @@ var render = function() {
                                                     _vm._s(
                                                       _vm.trans("em.vacant")
                                                     ) +
-                                                    " \n                                                " +
+                                                    "\n                          " +
                                                     _vm._s(
                                                       _vm.booked_tickets[
                                                         item.id +
@@ -65701,7 +65788,7 @@ var render = function() {
                                                     _vm._s(
                                                       _vm.trans("em.vacant")
                                                     ) +
-                                                    " \n                                                " +
+                                                    "\n                          " +
                                                     _vm._s(item.quantity)
                                                 )
                                               ])
@@ -65736,13 +65823,13 @@ var render = function() {
                               _c("div", { staticClass: "w-30 text-right" }, [
                                 _c("strong", [
                                   _vm._v(
-                                    "\n                                            " +
+                                    "\n                      " +
                                       _vm._s(
                                         _vm.total_price[index]
                                           ? _vm.total_price[index]
                                           : "0.00"
                                       ) +
-                                      "\n                                            "
+                                      "\n                      "
                                   ),
                                   _c("small", [_vm._v(_vm._s(_vm.currency))])
                                 ]),
@@ -65865,9 +65952,9 @@ var render = function() {
                       ? _c("div", { staticClass: "col-md-12" }, [
                           _c("div", { staticClass: "alert alert-danger" }, [
                             _vm._v(
-                              "\n                                " +
+                              "\n                " +
                                 _vm._s(_vm.trans("em.please_login_signup")) +
-                                "\n                            "
+                                "\n              "
                             )
                           ])
                         ])
@@ -65964,131 +66051,140 @@ var render = function() {
                                   : _vm._e(),
                                 _vm._v(" "),
                                 _vm.is_admin <= 0
-                                  ? _c("div", { staticClass: "radio-inline" }, [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.payment_method,
-                                            expression: "payment_method"
-                                          }
-                                        ],
-                                        staticClass: "custom-control-input",
-                                        attrs: {
-                                          type: "radio",
-                                          id: "payment_method_WAVE",
-                                          name: "payment_method",
-                                          value: "3"
-                                        },
-                                        domProps: {
-                                          checked: _vm._q(
-                                            _vm.payment_method,
-                                            "3"
-                                          )
-                                        },
-                                        on: {
-                                          change: function($event) {
-                                            _vm.payment_method = "3"
-                                          }
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "label",
-                                        {
-                                          staticClass: "custom-control-label",
-                                          attrs: { for: "payment_method_WAVE" }
-                                        },
-                                        [_vm._v("  Wave")]
-                                      )
-                                    ])
-                                  : _vm._e(),
-                                _vm._v(" "),
-                                _vm.is_admin <= 0
-                                  ? _c("div", { staticClass: "radio-inline" }, [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.payment_method,
-                                            expression: "payment_method"
-                                          }
-                                        ],
-                                        staticClass: "custom-control-input",
-                                        attrs: {
-                                          type: "radio",
-                                          id: "payment_method_OM",
-                                          name: "payment_method",
-                                          value: "4"
-                                        },
-                                        domProps: {
-                                          checked: _vm._q(
-                                            _vm.payment_method,
-                                            "4"
-                                          )
-                                        },
-                                        on: {
-                                          change: function($event) {
-                                            _vm.payment_method = "4"
-                                          }
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "label",
-                                        {
-                                          staticClass: "custom-control-label",
-                                          attrs: { for: "payment_method_OM" }
-                                        },
-                                        [_vm._v("  Orange Money")]
-                                      )
-                                    ])
-                                  : _vm._e(),
-                                _vm._v(" "),
-                                _vm.is_admin <= 0
-                                  ? _c("div", { staticClass: "radio-inline" }, [
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.payment_method,
-                                            expression: "payment_method"
-                                          }
-                                        ],
-                                        staticClass: "custom-control-input",
-                                        attrs: {
-                                          type: "radio",
-                                          id: "payment_method_Paydunia",
-                                          name: "payment_method",
-                                          value: "2"
-                                        },
-                                        domProps: {
-                                          checked: _vm._q(
-                                            _vm.payment_method,
-                                            "2"
-                                          )
-                                        },
-                                        on: {
-                                          change: function($event) {
-                                            _vm.payment_method = "2"
-                                          }
-                                        }
-                                      }),
-                                      _vm._v(" "),
-                                      _c(
-                                        "label",
-                                        {
-                                          staticClass: "custom-control-label",
+                                  ? _c(
+                                      "div",
+                                      { staticClass: "col-md-2 col-xs-12" },
+                                      [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.payment_method,
+                                              expression: "payment_method"
+                                            }
+                                          ],
+                                          staticClass: "custom-control-input",
                                           attrs: {
-                                            for: "payment_method_Paydunia"
+                                            type: "radio",
+                                            id: "payment_method_WAVE",
+                                            name: "payment_method",
+                                            value: "3"
+                                          },
+                                          domProps: {
+                                            checked: _vm._q(
+                                              _vm.payment_method,
+                                              "3"
+                                            )
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              _vm.payment_method = "3"
+                                            }
                                           }
-                                        },
-                                        [_vm._v("  Paydunya")]
-                                      )
-                                    ])
+                                        }),
+                                        _vm._v(" "),
+                                        _c("img", {
+                                          staticClass: "w-50",
+                                          attrs: {
+                                            src: __webpack_require__(/*! ../../../../../../public/images/wave.png */ "./public/images/wave.png").default,
+                                            alt: "wave"
+                                          }
+                                        })
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.is_admin <= 0
+                                  ? _c(
+                                      "div",
+                                      { staticClass: " col-md-2 col-xs-12" },
+                                      [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.payment_method,
+                                              expression: "payment_method"
+                                            }
+                                          ],
+                                          staticClass: "custom-control-input",
+                                          attrs: {
+                                            type: "radio",
+                                            id: "payment_method_OM",
+                                            name: "payment_method",
+                                            value: "4"
+                                          },
+                                          domProps: {
+                                            checked: _vm._q(
+                                              _vm.payment_method,
+                                              "4"
+                                            )
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              _vm.payment_method = "4"
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("img", {
+                                          staticClass: "w-50",
+                                          attrs: {
+                                            src: __webpack_require__(/*! ../../../../../../public/images/orange_money.png */ "./public/images/orange_money.png").default,
+                                            alt: "wave"
+                                          }
+                                        })
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.is_admin <= 0
+                                  ? _c(
+                                      "div",
+                                      {
+                                        staticClass: "col-md-2 col-xs-12 mt-4"
+                                      },
+                                      [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.payment_method,
+                                              expression: "payment_method"
+                                            }
+                                          ],
+                                          staticClass: "custom-control-input",
+                                          attrs: {
+                                            type: "radio",
+                                            id: "payment_method_Paydunia",
+                                            name: "payment_method",
+                                            value: "2"
+                                          },
+                                          domProps: {
+                                            checked: _vm._q(
+                                              _vm.payment_method,
+                                              "2"
+                                            )
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              _vm.payment_method = "2"
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("img", {
+                                          staticClass: "w-50",
+                                          attrs: {
+                                            src: __webpack_require__(/*! ../../../../../../public/images/visa_mastercard.png */ "./public/images/visa_mastercard.png").default,
+                                            alt: "wave"
+                                          }
+                                        })
+                                      ]
+                                    )
                                   : _vm._e(),
                                 _vm._v(" "),
                                 (_vm.is_organiser > 0 &&
@@ -66231,11 +66327,65 @@ var render = function() {
                         ])
                   ])
                 ]
+              ),
+              _vm._v(" "),
+              _c(
+                "form",
+                {
+                  ref: "form_om",
+                  attrs: {
+                    action: "https://api.paiementorangemoney.com",
+                    method: "POST"
+                  }
+                },
+                [
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_IDENTIFIANT" },
+                    domProps: { value: _vm.om_config.identifiant }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_SITE" },
+                    domProps: { value: _vm.om_config.site }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_TOTAL" },
+                    domProps: { value: 200 }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_REF_COMMANDE" },
+                    domProps: { value: _vm.om_config.ref_commande }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_COMMANDE" },
+                    domProps: { value: _vm.om_config.commande }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_DATEH" },
+                    domProps: { value: _vm.om_config.dateh }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_HTYPE" },
+                    domProps: { value: _vm.om_config.algo }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_HMAC" },
+                    domProps: { value: _vm.om_config.hmac }
+                  })
+                ]
               )
             ])
           ])
         ])
-      : _vm._e()
+      : _vm._e(),
+    _vm._v(" "),
+    _c("div", { staticClass: "d-none" })
   ])
 }
 var staticRenderFns = [

@@ -99,7 +99,8 @@ Route::group([
     Route::get('/home', function() {
         return redirect()->route('eventmie.welcome');
     });
-    
+
+
     /* Tags */
     Route::prefix('/mytags')->group(function () use ($namespace)  {
         $controller = $namespace.'\TagsController';
@@ -165,6 +166,7 @@ Route::group([
         // API
         Route::post('/api/get_tickets', "$controller@get_tickets")->name('bookings_get_tickets');
         Route::post('/api/book_tickets', "$controller@book_tickets")->name('bookings_book_tickets');
+        Route::get('/api/get_om_config', "$controller@get_om_config")->name('get_om_config');
     });
     
     /* My Bookings (customers) */
