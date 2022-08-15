@@ -317,9 +317,8 @@ export default {
     mixins:[
         mixinsFilters
     ],
-
      components: {
-        'ticket-component'  : TicketComponent
+        'ticket-component'  : TicketComponent,
     },
 
     data() {
