@@ -26,6 +26,7 @@ class BookingsController extends BaseBookingsController
     // book tickets
     public function book_tickets(Request $request)
     {
+        //return $request->all();
         // check login user role
         $status = $this->is_admin_organiser($request);
 
@@ -93,7 +94,8 @@ class BookingsController extends BaseBookingsController
             $booking[$key]['currency']          = setting('regional.currency_default');
 
             $booking[$key]['event_repetitive']  = $data['event']->repetitive > 0 ? 1 : 0;
-
+            $booking[$key]['full_name']         = $value['full_name'];
+            $booking[$key]['phone']             = $value['phone'];
             // non-repetitive
             $booking[$key]['event_start_date']  = $data['event']->start_date;
             $booking[$key]['event_end_date']    = $data['event']->end_date;

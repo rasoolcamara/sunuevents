@@ -32,6 +32,7 @@ Vue.use(VueGoogleMaps, {
  */
 Vue.component('select-dates', require('./components/SelectDates.vue').default);
 Vue.component('ticket-component', require('./components/TicketList.vue').default);
+Vue.component('checkout-ticket', require('./components/CheckoutTickets.vue').default);
 
 Vue.component('gallery-images', require('../../../../../eventmie-pro/resources/js/events_show/components/GalleryImages.vue').default);
 

@@ -14,11 +14,11 @@
         </section> 
     </div>
 </main>
-@endsection
+@stop
 
 @section('javascript')
-<script>    
-    var path           = {!! json_encode($path, JSON_HEX_TAG) !!};
+<script>
+    var path = {!! json_encode($path, JSON_HEX_TAG) !!};
 </script>
     
 <script type="text/javascript" src="{{ eventmie_asset('js/myevents_v1.6.js') }}"></script>

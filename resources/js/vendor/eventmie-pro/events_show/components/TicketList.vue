@@ -10,7 +10,7 @@
             </div>
           </div>
 
-          <form ref="form" @submit.prevent="validateForm" method="POST" >
+          <form ref="formTest" @submit.prevent="validateForm" method="POST" >
 
             <input type="hidden" class="form-control" name="event_id" :value="tickets[0].event_id" >
             <input type="hidden" class="form-control" name="booking_date" :value="convert_date(moment(booking_date, 'dddd LL').format('dddd LL'))" >
@@ -39,8 +39,9 @@
                       :required="!customer"
                       :filterable="false"
                       :options="options"
-                      @search="onSearch"
-                  ><div slot="no-options">{{ trans('em.customer_not_found') }}</div></v-select>
+                      @search="onSearch" id="customer_id">
+                    <div slot="no-options">{{ trans('em.customer_not_found') }}</div>
+                  </v-select>
 
                   <div class="invalid-feedback danger" v-show="errors.has('customer_id')">{{ errors.first('customer_id') }}</div>
                 </div>
@@ -68,7 +69,7 @@
 
                     <div>
                       <h6 class="my-0"><strong>{{ trans('em.start') }} - {{ trans('em.end') }} {{ trans('em.date') }}</strong></h6>
-                      <p class="mb-2" v-if="event.repetitive > 0">
+                      <p class="mb-2" v-if="event.repetitive > 0">F
                         {{ booking_date }} <small><strong>-</strong></small> <br>
                         {{ booking_end_date != null ? booking_end_date : booking_date  }}
                       </p>
@@ -98,8 +99,7 @@
                 <ul class="list-group m-0">
                   <li class="list-group-item d-flex justify-content-between lh-condensed d-flex-wrap"
                       v-for="(item, index) in tickets"
-                      :key = "index"
-                  >
+                      :key = "index">
                     <input type="hidden" class="form-control" name="ticket_id[]" :value="item.id" >
                     <input type="hidden" class="form-control" name="ticket_title[]" :value="item.title" >
 
@@ -193,121 +193,163 @@
                   </li>
                 </ul>
               </div>
-
-              <!-- Cart Totals -->
-              <div class="col-md-12">
-                <p class="m-0 lead lead-caption text-center">{{ trans('em.cart') }}</p>
-
-                <ul class="list-group m-0">
-                  <li class="list-group-item d-flex justify-content-between">
-                    <h6 class="my-0"><strong>{{ trans('em.total_tickets') }}</strong></h6>
-                    <strong :class="{'ticket-selected-text': bookedTicketsTotal() > 0 }">{{ bookedTicketsTotal() }}</strong>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <h6 class="my-0"><strong>{{ trans('em.total_order') }}</strong></h6>
-                    <strong :class="{'ticket-selected-text': bookedTicketsTotal() > 0 }">{{ total }} <small>{{currency}}</small></strong>
-                  </li>
-                </ul>
-              </div>
-
-              <!-- If not logged in -->
-              <div class="col-md-12" v-if="!login_user_id">
-                <div class="alert alert-danger">
-                  {{ trans('em.please_login_signup') }}
-                </div>
-              </div>
-
-              <!-- Payments -->
-              <div class="col-md-12" v-if="bookedTicketsTotal() > 0 && login_user_id">
-
-                <p class="m-0 lead lead-caption text-center ">{{ trans('em.payment') }}</p>
-
-                <!-- Free -->
-                <div class="d-block my-3 pl-3" v-if="total <= 0">
-                  <div class="radio-inline">
-                    <input id="free_order" name="free_order" type="radio" class="custom-control-input" checked>
-                    <label class="custom-control-label" for="free_order"> &nbsp;<i class="fas fa-glass-cheers"></i> {{ trans('em.free') }} <small class="text-lowercase">({{ trans('em.checkout') }}-{{ trans('em.free') }} )</small></label>
-                  </div>
-                </div>
-
-                <!-- Paid -->
-                <div class="d-block my-3 pl-3" v-else>
-
-                  <!-- For Organizer & Customer -->
-                  <div class="radio-inline" v-if="is_admin <= 0 && is_paypal > 0">
-                    <input type="radio" class="custom-control-input" id="payment_method_paypal" name="payment_method" v-model="payment_method" value="1" >
-                    <label class="custom-control-label" for="payment_method_paypal"> &nbsp;<i class="fab fa-paypal"></i> PayPal</label>
-                  </div>
-
-                  <!-- CUSTOM -->
-                  <!-- For Organizer & Customer -->
-                  <!-- WAVE -->
-                  <div class="col-md-2 col-xs-12" v-if="is_admin <= 0 ">
-                    <input type="radio" class="custom-control-input" id="payment_method_WAVE" name="payment_method" v-model="payment_method" value="3">
-                    <!--<label class="custom-control-label" for="payment_method_WAVE"> &nbsp;Wave</label>-->
-                      <img class="w-50" :src="require('../../../../../../public/images/wave.png').default" alt="wave"/>
-                  </div>
-                  <!-- OM SN -->
-
-                  <div class=" col-md-2 col-xs-12" v-if="is_admin <= 0 ">
-                    <input type="radio" class="custom-control-input" id="payment_method_OM" name="payment_method" v-model="payment_method" value="4">
-                    <img class="w-50" :src="require('../../../../../../public/images/orange_money.png').default" alt="wave"/>
-                  </div>
-                  <!-- PAYDUNYA -->
-
-                  <div class="col-md-2 col-xs-12 mt-4" v-if="is_admin <= 0 ">
-                    <input type="radio" class="custom-control-input" id="payment_method_Paydunia" name="payment_method" v-model="payment_method" value="2">
-                    <img class="w-50" :src="require('../../../../../../public/images/visa_mastercard.png').default" alt="wave"/>
-                  </div>
-                  <!-- CUSTOM -->
-
-
-                  <!-- For Admin & Organizer & Customer -->
-                  <div class="radio-inline"
-                       v-if="
-                                            (is_organiser > 0 && is_offline_payment_organizer > 0) || 
-                                            (is_customer > 0 && is_offline_payment_customer > 0) ||
-                                            (is_admin > 0)
-                                        "
-                  >
-                    <input type="radio" class="custom-control-input" id="payment_method_offline" name="payment_method" v-model="payment_method" value="offline">
-                    <label class="custom-control-label" for="payment_method_offline"> &nbsp;<i class="fas fa-suitcase-rolling"></i> {{ trans('em.offline') }} <small>({{ trans('em.cash_on_arrival') }})</small></label>
-                  </div>
-                </div>
-
-              </div>
-
             </div>
 
             <div class="row mt-5">
-              <div class="col-xs-12" v-if="login_user_id">
-                <button :class="{ 'disabled' : disable }"  :disabled="disable" type="button" class="btn lgx-btn btn-block" @click="bookTickets()"><i class="fas fa-cash-register"></i> {{ trans('em.checkout') }}</button>
+              <div class="col-xs-12">
+                <button :class="{ 'disabled' : disable }"  :disabled="disable" type="button" class="btn lgx-btn btn-block" @click="checkout()"><i class="fas fa-cash-register"></i> Acheter maintenant</button>
               </div>
-              <div class="col-xs-12" v-else>
-                <div class="btn-group btn-group-justified">
-                  <button type="button" class="btn lgx-btn w-50" @click="signupFirst()"><i class="fas fa-user-plus"></i> {{ trans('em.register') }}</button>
-                  <button type="button" class="btn lgx-btn lgx-btn-black w-50" @click="loginFirst()"><i class="fas fa-fingerprint"></i> {{ trans('em.login') }}</button>
-                </div>
-              </div>
+
             </div>
 
           </form>
-          <form action="https://api.paiementorangemoney.com" method="POST" ref="form_om"  >
-            <input type="hidden" name="S2M_IDENTIFIANT" :value="om_config.identifiant">
-            <input type="hidden" name="S2M_SITE" :value="om_config.site">
-            <input type="hidden" name="S2M_TOTAL" :value="200">
-            <input type="hidden" name="S2M_REF_COMMANDE" :value="om_config.ref_commande">
-            <input type="hidden" name="S2M_COMMANDE" :value="om_config.commande">
-            <input type="hidden" name="S2M_DATEH" :value="om_config.dateh">
-            <input type="hidden" name="S2M_HTYPE" :value="om_config.algo">
-            <input type="hidden" name="S2M_HMAC" :value="om_config.hmac">
-          </form>
-
         </div>
       </div>
     </div>
 
-    <div class="d-none">
+<!--    <checkout-ticket>-->
+<!--    </checkout-ticket>-->
+
+    <div>
+      <div class="modal modal-mask" v-if="showModal">
+        <div class="modal-dialog modal-container modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" @click="close()"><span aria-hidden="true">&times;</span></button>
+              <div class="text-center">
+                <h3 class="title ticket-selected-text mb-4">{{ trans('em.checkout') }}</h3>
+              </div>
+            </div>
+
+              <form ref="form" @submit.prevent="" method="POST" >
+                <div class="form-group row">
+                  <label for="full_name" class="col-sm-2 my-0">Nom Complet</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="full_name" name="full_name" v-model="full_name" v-validate="'required'">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="phone" class="col-sm-2 my-0">Téléphone</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="phone" name="phone" v-model="phone" v-validate="'required'">
+                  </div>
+                </div>
+
+                <div class="row" >
+
+                  <!-- Cart Totals -->
+                  <div class="col-md-12">
+                    <p class="m-0 lead lead-caption text-center">{{ trans('em.cart') }}</p>
+
+                    <ul class="list-group m-0">
+                      <li class="list-group-item d-flex justify-content-between">
+                        <h6 class="my-0"><strong>{{ trans('em.total_tickets') }}</strong></h6>
+                        <strong :class="{'ticket-selected-text': bookedTicketsTotal() > 0 }">{{ bookedTicketsTotal() }}</strong>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <h6 class="my-0"><strong>{{ trans('em.total_order') }}</strong></h6>
+                        <strong :class="{'ticket-selected-text': bookedTicketsTotal() > 0 }">{{ total }} <small>{{currency}}</small></strong>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- If not logged in -->
+                  <!--<div class="col-md-12" v-if="!login_user_id">
+                    <div class="alert alert-danger">
+                      {{ trans('em.please_login_signup') }}
+                    </div>
+                  </div>-->
+
+                  <!-- Payments -->
+                  <div class="col-md-12" v-if="bookedTicketsTotal() > 0">
+
+                    <p class="m-0 lead lead-caption text-center ">{{ trans('em.payment') }}</p>
+
+                    <!-- Free -->
+                    <div class="d-block my-3 pl-3" v-if="total <= 0">
+                      <div class="radio-inline">
+                        <input id="free_order" name="free_order" type="radio" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="free_order"> &nbsp;<i class="fas fa-glass-cheers"></i> {{ trans('em.free') }} <small class="text-lowercase">({{ trans('em.checkout') }}-{{ trans('em.free') }} )</small></label>
+                      </div>
+                    </div>
+
+                    <!-- Paid -->
+                    <div class="d-block my-3 pl-3" v-else>
+
+                      <!-- For Organizer & Customer -->
+                      <div class="radio-inline" v-if="is_admin <= 0 && is_paypal > 0">
+                        <input type="radio" class="custom-control-input" id="payment_method_paypal" name="payment_method" v-model="payment_method" value="1" >
+                        <label class="custom-control-label" for="payment_method_paypal"> &nbsp;<i class="fab fa-paypal"></i> PayPal</label>
+                      </div>
+
+                      <!-- CUSTOM -->
+                      <!-- For Organizer & Customer -->
+                      <!-- WAVE -->
+                      <div class="col-md-2 col-xs-12" v-if="is_admin <= 0 ">
+                        <input type="radio" class="custom-control-input" id="payment_method_WAVE" name="payment_method" v-model="payment_method" value="3">
+                        <!--<label class="custom-control-label" for="payment_method_WAVE"> &nbsp;Wave</label>-->
+                        <img class="w-50" :src="require('../../../../../../public/images/wave.png').default" alt="wave"/>
+                      </div>
+                      <!-- OM SN -->
+
+                      <div class=" col-md-2 col-xs-12" v-if="is_admin <= 0 ">
+                        <input type="radio" class="custom-control-input" id="payment_method_OM" name="payment_method" v-model="payment_method" value="4">
+                        <img class="w-50" :src="require('../../../../../../public/images/orange_money.png').default" alt="wave"/>
+                      </div>
+                      <!-- PAYDUNYA -->
+
+                      <div class="col-md-2 col-xs-12 mt-4" v-if="is_admin <= 0 ">
+                        <input type="radio" class="custom-control-input" id="payment_method_Paydunia" name="payment_method" v-model="payment_method" value="2">
+                        <img class="w-50" :src="require('../../../../../../public/images/visa_mastercard.png').default" alt="wave"/>
+                      </div>
+                      <!-- CUSTOM -->
+
+
+                      <!-- For Admin & Organizer & Customer -->
+                      <div class="radio-inline"
+                           v-if="
+                                                (is_organiser > 0 && is_offline_payment_organizer > 0) ||
+                                                (is_customer > 0 && is_offline_payment_customer > 0) ||
+                                                (is_admin > 0)
+                                            "
+                      >
+                        <input type="radio" class="custom-control-input" id="payment_method_offline" name="payment_method" v-model="payment_method" value="offline">
+                        <label class="custom-control-label" for="payment_method_offline"> &nbsp;<i class="fas fa-suitcase-rolling"></i> {{ trans('em.offline') }} <small>({{ trans('em.cash_on_arrival') }})</small></label>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="row mt-5">
+                  <div class="col-xs-12">
+                    <button :class="{ 'disabled' : disable }"  :disabled="disable" type="button" class="btn lgx-btn btn-block" @click="bookTickets"><i class="fas fa-cash-register"></i> {{ trans('em.checkout') }}</button>
+                  </div>
+                  <!-- <div class="col-xs-12">
+                     <div class="btn-group btn-group-justified">
+                       <button type="button" class="btn lgx-btn w-50" @click="signupFirst()"><i class="fas fa-user-plus"></i> {{ trans('em.register') }}</button>
+                       <button type="button" class="btn lgx-btn lgx-btn-black w-50" @click="loginFirst()"><i class="fas fa-fingerprint"></i> {{ trans('em.login') }}</button>
+                     </div>
+                   </div>-->
+                </div>
+
+              </form>
+              <form action="https://api.paiementorangemoney.com" method="POST" ref="form_om"  >
+                <input type="hidden" name="S2M_IDENTIFIANT" :value="om_config.identifiant">
+                <input type="hidden" name="S2M_SITE" :value="om_config.site">
+                <input type="hidden" name="S2M_TOTAL" :value="200">
+                <input type="hidden" name="S2M_REF_COMMANDE" :value="om_config.ref_commande">
+                <input type="hidden" name="S2M_COMMANDE" :value="om_config.commande">
+                <input type="hidden" name="S2M_DATEH" :value="om_config.dateh">
+                <input type="hidden" name="S2M_HTYPE" :value="om_config.algo">
+                <input type="hidden" name="S2M_HMAC" :value="om_config.hmac">
+              </form>
+          </div>
+        </div>
+      </div>
+
+
 
     </div>
   </div>
@@ -318,12 +360,16 @@
 import { mapState, mapMutations} from 'vuex';
 import mixinsFilters from '../../../../../../eventmie-pro/resources/js/mixins.js';
 import _ from 'lodash';
+import CheckoutTicket from './CheckoutTickets';
 
 export default {
 
   mixins:[
     mixinsFilters
   ],
+  components: {
+    'checkout-ticket'    : CheckoutTicket
+  },
 
   props : [
     'tickets',
@@ -342,6 +388,7 @@ export default {
 
   data() {
     return {
+      showModal           : false,
       openModal           : false,
       ticket_info         : false,
       moment              : moment,
@@ -349,6 +396,8 @@ export default {
       price               : null,
       total_price         : [],
       customer_id         : 0,
+      full_name           : null,
+      phone               : null,
       total               : 0,
       disable             : false,
       payment_method      : 'offline',
@@ -399,8 +448,13 @@ export default {
 
       this.openModal      = false;
     },
+     checkout(){
+       this.showModal      = true;
+     },
 
     bookTickets(){
+
+
       // show loader
       this.showLoaderNotification(trans('em.processing'));
 
@@ -414,7 +468,8 @@ export default {
       // axios post request
       axios.post(post_url, post_data)
           .then(res => {
-            if(res.data.status && res.data.message != ''  && typeof(res.data.message) != "undefined") {
+
+          /*  if(res.data.status && res.data.message != ''  && typeof(res.data.message) != "undefined") {
 
               // hide loader
               Swal.hideLoading();
@@ -477,7 +532,7 @@ export default {
           }).then(res => {
             if(res.data.status && res.data.om_config) {
               this.$refs.form_om.submit();
-            }
+            }*/
          }).catch(error => {
             this.disable = false;
             let serrors = Vue.helpers.axiosErrors(error);
@@ -753,7 +808,7 @@ export default {
 
   mounted() {
     this.openModal = true;
-    this.setDefaultQuantity();
+   // this.setDefaultQuantity();
     this.defaultPaymentMethod();
   },
 }

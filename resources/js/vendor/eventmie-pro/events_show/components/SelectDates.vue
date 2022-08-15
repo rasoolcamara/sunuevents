@@ -3,18 +3,18 @@
     <div class="col-xs-12">
         <div class="lgx-tab" v-if="event.repetitive > 0">
             <ul class="nav nav-pills lgx-nav">
-                <li v-for="(item, index) in calculate_months" 
+                <li v-for="(item, index) in calculate_months"
                     :key="index" :class="{'active' : index == tab_active_index}"
                     @click="tab_active_index = index"
                 >
                     <a data-toggle="pill">
                         <h3>
                             <span>{{ index == 0 ? moment(local_start_date, "YYYY-MM-DD").format('MMMM YYYY')
-                                : moment(local_from_date[index], "YYYY-MM-DD").format('MMMM  YYYY') }} 
+                                : moment(local_from_date[index], "YYYY-MM-DD").format('MMMM  YYYY') }}
                             </span>
                             <!-- {{ index == (calculate_months.length-1) ? moment(local_end_date, "YYYY-MM-DD").format('MMMM YYYY')
                                 : moment(local_to_date[index], "YYYY-MM-DD").format('MMMM YYYY') }}  -->
-                        </h3> 
+                        </h3>
                         <p>
                             <span> {{ selected_dates[index].length }} </span> {{ selected_dates[index].length > 1 ? trans('em.days') : trans('em.day') }} {{ trans('em.event') }}
                         </p>
@@ -25,30 +25,30 @@
 
             <!-- non-merge schedule | daily/weekly/monthly -->
             <div class="tab-content lgx-tab-content" v-if="!event.merge_schedule">
-                <div v-for="(item, index) in calculate_months" 
+                <div v-for="(item, index) in calculate_months"
                     :key="index"   class="tab-pane" :class="{'active' : index == tab_active_index}" >
                     <div class="panel-group" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default lgx-panel">
                             <div class="panel-heading" role="tab">
                                 <div class="panel-title">
                                     <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
-                                        <div class="lgx-single-schedule"  
+                                        <div class="lgx-single-schedule"
                                             :class="{
                                                 'expired-event': moment(dateToFullDate(selected_date, schedules[index].from_date),'dddd LL').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD'),
                                                 'outofstock-event': !available_dates[index][index1]
                                             }"
-                                            v-for="(selected_date, index1) in selected_dates[index]" 
-                                            :key="index1" 
+                                            v-for="(selected_date, index1) in selected_dates[index]"
+                                            :key="index1"
                                         >
-                                            <div class="schedule-info" 
+                                            <div class="schedule-info"
                                                 @click="
                                                     (!(moment(dateToFullDate(selected_date, schedules[index].from_date), 'dddd LL').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) && available_dates[index][index1])
                                                     ? selectDates(dateToFullDate(selected_date, schedules[index].from_date), false,
-                                                    changeTimeFormat(local_from_time[index]), changeTimeFormat(local_to_time[index]) ) 
+                                                    changeTimeFormat(local_from_time[index]), changeTimeFormat(local_to_time[index]) )
                                                     : null">
                                                 <h3 class="title">{{ dateToShortDate(selected_date, schedules[index].from_date) }}</h3>
                                                 <h4 class="time">{{changeTimeFormat(local_from_time[index]) }} - {{ changeTimeFormat(local_to_time[index])}}</h4>
-                                                
+
                                                 <!-- expired -->
                                                 <h4 class="time event-ended" v-if="moment(dateToFullDate(selected_date, schedules[index].from_date),'dddd LL').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')"
                                                 >
@@ -87,7 +87,7 @@
                             <div class="panel-heading" role="tab">
                                 <div class="panel-title">
                                     <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
-                                        <div class="lgx-single-schedule"  
+                                        <div class="lgx-single-schedule"
                                             :class="{
                                                 'expired-event': moment(dateToFullDate(selected_dates[index][0],schedules[index].from_date),'dddd LL').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD'),
                                                 'outofstock-event': !available_dates[index][0]
@@ -97,22 +97,22 @@
                                                 ? selectDates(
                                                 dateToFullDate(selected_dates[index][0],schedules[index].from_date),
                                                 dateToFullDate(selected_dates[index][selected_dates[index].length - 1], schedules[index].from_date),
-                                                changeTimeFormat(local_from_time[index]), 
-                                                changeTimeFormat(local_to_time[index]) 
-                                            ) : null" 
+                                                changeTimeFormat(local_from_time[index]),
+                                                changeTimeFormat(local_to_time[index])
+                                            ) : null"
                                         >
-                                            <div class="schedule-info pl-0"> 
+                                            <div class="schedule-info pl-0">
                                                 <h4 class="time">
-                                                    {{changeTimeFormat(local_from_time[index]) }} - 
+                                                    {{changeTimeFormat(local_from_time[index]) }} -
                                                     {{ changeTimeFormat(local_to_time[index])}}
                                                 </h4>
-                                                
+
                                                 <!-- expired -->
                                                 <h4 class="time event-ended" v-if="moment(dateToFullDate(selected_dates[index][0],schedules[index].from_date),'dddd LL').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')"
                                                 >
                                                     <span>{{ trans('em.ended') }}</span>
                                                 </h4>
-                                                
+
                                                 <!-- out-of-stock -->
                                                 <h4 class="time event-outofstock" v-if="
                                                     !(moment(dateToFullDate(selected_dates[index][0],schedules[index].from_date),'dddd LL').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) && !available_dates[index][0]"
@@ -126,10 +126,10 @@
                                                 >
                                                     <span>{{ trans('em.filling_fast') }}</span>
                                                 </h4>
-                                                
+
                                                 <ul class="date-list">
                                                     <li
-                                                        v-for="(selected_date, index2) in selected_dates[index]" 
+                                                        v-for="(selected_date, index2) in selected_dates[index]"
                                                         :key="index2"
                                                     >{{ dateToShortDate(selected_date, schedules[index].from_date) }}</li>
                                                 </ul>
@@ -152,35 +152,35 @@
                             <div class="panel-heading" role="tab">
                                 <div class="panel-title">
                                     <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
-                                        <div class="lgx-single-schedule"  
+                                        <div class="lgx-single-schedule"
                                             :class="{
                                                 'expired-event': moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD'),
                                                 'outofstock-event': !checkSeatAvailability(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).format('YYYY-MM-DD'))
                                             }"
-                                            v-for="(item2, index2) in week_numbers[index]" 
+                                            v-for="(item2, index2) in week_numbers[index]"
                                             :key="index2"
                                             @click="
-                                                (!(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) && 
-                                                checkSeatAvailability(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).format('YYYY-MM-DD'))) 
+                                                (!(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) &&
+                                                checkSeatAvailability(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).format('YYYY-MM-DD')))
                                                 ? selectDates(
                                                 getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date),
                                                 getWeekLastDate(item2, selected_dates[index], schedules[index].from_date),
-                                                changeTimeFormat(local_from_time[index]), 
+                                                changeTimeFormat(local_from_time[index]),
                                                 changeTimeFormat(local_to_time[index]))
-                                                : null" 
+                                                : null"
                                         >
-                                            <div class="schedule-info pl-0"> 
+                                            <div class="schedule-info pl-0">
                                                 <h4 class="time">{{changeTimeFormat(local_from_time[index]) }} - {{ changeTimeFormat(local_to_time[index])}}</h4>
-                                                
+
                                                 <!-- expired -->
                                                 <h4 class="time event-ended" v-if="moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')"
                                                 >
                                                     <span>{{ trans('em.ended') }}</span>
                                                 </h4>
-                                                
+
                                                 <!-- out-of-stock -->
                                                 <h4 class="time event-outofstock" v-if="
-                                                    !(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) && 
+                                                    !(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) &&
                                                     !checkSeatAvailability(moment(getWeekFirstDate(item2, selected_dates[index], schedules[index].from_date)).format('YYYY-MM-DD'))"
                                                 >
                                                     <span>{{ trans('em.out_of_stock') }}</span>
@@ -196,7 +196,7 @@
 
                                                 <ul class="date-list">
                                                     <li
-                                                        v-for="(selected_date, index3) in selected_dates[index]" 
+                                                        v-for="(selected_date, index3) in selected_dates[index]"
                                                         :key="index3"
                                                         v-if="item2 == moment(dateToFullDate(selected_date, schedules[index].from_date),'dddd LL').isoWeek()"
                                                     >{{ dateToShortDate(selected_date, schedules[index].from_date) }}</li>
@@ -228,10 +228,10 @@
                                                 'outofstock-event': !checkSeatAvailability(moment(event.start_date,'YYYY-MM-DD' ).format('YYYY-MM-DD'))
                                             }"
                                         >
-                                            <div class="schedule-info" 
+                                            <div class="schedule-info"
                                                 @click="
-                                                    (!(moment(event.start_date, 'YYYY-MM-DD').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) && 
-                                                    checkSeatAvailability(moment(event.start_date,'YYYY-MM-DD' ).format('YYYY-MM-DD'))) 
+                                                    (!(moment(event.start_date, 'YYYY-MM-DD').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) &&
+                                                    checkSeatAvailability(moment(event.start_date,'YYYY-MM-DD' ).format('YYYY-MM-DD')))
                                                 ? singleEvent() : null"
                                             >
                                                 <h3 class="title">{{ convert_date_to_local_format(event.start_date) }} - {{ convert_date_to_local_format(event.end_date) }}</h3>
@@ -242,10 +242,10 @@
                                                 >
                                                     <span>{{ trans('em.ended') }}</span>
                                                 </h4>
-                                                
+
                                                 <!-- out-of-stock -->
                                                 <h4 class="time event-outofstock" v-if="
-                                                    !(moment(event.start_date, 'YYYY-MM-DD').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) && 
+                                                    !(moment(event.start_date, 'YYYY-MM-DD').add(1, 'day').format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')) &&
                                                     !checkSeatAvailability(moment(event.start_date,'YYYY-MM-DD' ).format('YYYY-MM-DD'))"
                                                 >
                                                     <span>{{ trans('em.out_of_stock') }}</span>
@@ -270,11 +270,11 @@
             </div>
         </div>
 
-        <ticket-component 
-            v-if="booking_date && start_time && end_time" 
-            :event="event" 
-            :tickets="tickets" 
-            :max_ticket_qty="max_ticket_qty" 
+        <ticket-component
+            v-if="booking_date && start_time && end_time"
+            :event="event"
+            :tickets="tickets"
+            :max_ticket_qty="max_ticket_qty"
             :currency="currency"
             :login_user_id="login_user_id"
             :is_admin="is_admin"
@@ -287,7 +287,7 @@
         >
         </ticket-component>
 
-        
+
     </div>
 </template>
 
@@ -678,7 +678,7 @@ export default {
         singleEvent(){
             if(this.event.repetitive <= 0 )
             {
-               
+
                 this.add({
                     booking_date        : moment(this.event.start_date, "YYYY-MM-DD").format('dddd LL'),
                     booked_date_server  : moment(this.event.start_date, "YYYY-MM-DD").format('YYYY-MM-DD'),
