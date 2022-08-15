@@ -198,7 +198,8 @@
                             :tickets="{{ json_encode($tickets, JSON_HEX_APOS) }}"
                             :booked_tickets="{{ json_encode($booked_tickets, JSON_HEX_APOS) }}"
                             :currency="{{ json_encode($currency, JSON_HEX_APOS) }}"
-                            :total_capacity="{{ $total_capacity }}">
+                            :total_capacity="{{ $total_capacity }}"
+                            :organiser_id="{{ $event->organiser($event->user_id)->id }}">
                     </select-dates>
                 </div>
                 <!--//.ROW-->

@@ -427,6 +427,10 @@ class Event extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function organiser($userId)
+    {
+        return User::find($userId);
+    }
 
      /**
       * ============================= End particular organiser events ===================================================

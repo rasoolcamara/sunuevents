@@ -7,9 +7,9 @@ use Classiebit\Eventmie\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Auth;
 use Classiebit\Eventmie\Models\Booking;
 use Classiebit\Eventmie\Models\Event;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Paydunya\Setup;
 use Paydunya\Checkout\Store;
@@ -26,18 +26,20 @@ class BookingsController extends BaseBookingsController
     // book tickets
     public function book_tickets(Request $request)
     {
-        //return $request->all();
+        // return $request->all();
+
+
         // check login user role
-        $status = $this->is_admin_organiser($request);
+        // $status = $this->is_admin_organiser($request);
 
         // organiser can't book other organiser event's tikcets but  admin can book any organiser events'tikcets for customer
-        if(!$status) {
+        /* if(!$status) {
             return response([
                 'status'    => false,
                 'url'       => route('eventmie.events_index'),
                 'message'   => __('eventmie-pro::em.organiser_note_5'),
             ], Response::HTTP_OK);
-        }
+        } */
 
         // 1. General validation and get selected ticket and event id
         $data = $this->general_validation($request);
@@ -57,17 +59,16 @@ class BookingsController extends BaseBookingsController
         $selected_tickets   = $data['selected_tickets'];
         $tickets            = $data['tickets'];
 
-
         $booking_date = $request->booking_date;
 
-        $params  = [
-            'customer_id' => $this->customer_id,
-        ];
+        // $params  = [
+        //     'customer_id' => $this->customer_id,
+        // ];
         // get customer information by customer id    
-        $customer   = $this->user->get_customer($params);
+        // $customer   = $this->user->get_customer($params);
 
-        if(empty($customer))
-            return error($pre_time_booking['error'], Response::HTTP_BAD_REQUEST);
+        // if(empty($customer))
+        //     return error($pre_time_booking['error'], Response::HTTP_BAD_REQUEST);
 
         $booking        = [];
         $price          = 0;
@@ -77,10 +78,10 @@ class BookingsController extends BaseBookingsController
         $booking_organiser_price    = [];
         $admin_tax                  = [];
         foreach($selected_tickets as $key => $value) {
-            $booking[$key]['customer_id']       = $this->customer_id;
-            $booking[$key]['customer_name']     = $customer['name'];
-            $booking[$key]['customer_email']    = $customer['email'];
-            $booking[$key]['organiser_id']      = $this->organiser_id;
+            // $booking[$key]['customer_id']       = $this->customer_id;
+            // $booking[$key]['customer_name']     = $customer['name'];
+            // $booking[$key]['customer_email']    = $customer['email'];
+            $booking[$key]['organiser_id']      = $request->organiser_id;
             $booking[$key]['event_id']          = $request->event_id;
             $booking[$key]['ticket_id']         = $value['ticket_id'];
             $booking[$key]['quantity']          = $value['quantity'];
@@ -94,8 +95,8 @@ class BookingsController extends BaseBookingsController
             $booking[$key]['currency']          = setting('regional.currency_default');
 
             $booking[$key]['event_repetitive']  = $data['event']->repetitive > 0 ? 1 : 0;
-            $booking[$key]['full_name']         = $value['full_name'];
-            $booking[$key]['phone']             = $value['phone'];
+            $booking[$key]['full_name']         = $request->full_name;
+            $booking[$key]['phone']             = $request->phone;
             // non-repetitive
             $booking[$key]['event_start_date']  = $data['event']->start_date;
             $booking[$key]['event_end_date']    = $data['event']->end_date;
@@ -192,11 +193,11 @@ class BookingsController extends BaseBookingsController
             // if customer then redirect to mybookings
             $url = route('eventmie.mybookings_index');
 
-            if(Auth::user()->hasRole('organiser'))
-                $url = route('eventmie.obookings_index');
+            // if(Auth::user() && Auth::user()->hasRole('organiser'))
+            //     $url = route('eventmie.obookings_index');
 
-            if(Auth::user()->hasRole('admin'))
-                $url = route('voyager.bookings.index');
+            // if(Auth::user() && Auth::user()->hasRole('admin'))
+            //     $url = route('voyager.bookings.index');
 
             return response([
                 'status'    => true,
@@ -445,8 +446,8 @@ class BookingsController extends BaseBookingsController
     {
         $payment_method = [
             'payment_method' => $request->payment_method,
-            'customer_email' => $booking[key($booking)]['customer_email'],
-            'customer_name'  => $booking[key($booking)]['customer_name'],
+            'phone' => $booking[key($booking)]['phone'],
+            'full_name'  => $booking[key($booking)]['full_name'],
             'event_title'    => $booking[key($booking)]['event_title'],
         ];
 
@@ -501,11 +502,8 @@ class BookingsController extends BaseBookingsController
             $response = Http::withHeaders([
                 'Content-Type'  => 'application/json',
                 'Authorization' => 'Bearer wave_sn_prod_a0NVjFwZbobr_t5aPnfgR76tOv22ApBAiMo5U9D7T27SOgHWBd0munUrFsw-0bENBdAqOzfdTsu2TSRVakhzI0O_Bt0HVbIOjQ',
-                // 'Authorization' => 'Bearer wave_sn_prod_CN1R1ZFFStIJR3QuvKa1X1mYEqOKCKV2Gr1oPSXYSe3RUyebTvbrtjJcerYaARuu0XXObFs3jO-sQyWJiAvWN-8rIL369n4enw',
-                // 'Authorization' => 'Bearer wave_sn_test_KDR7FXgVJjCFd7LSecKSerLhWiwTKpwDK2Oz03F9NNf-jqk6otb56FZfWccO4KisektIx-7JyyO1E5iCrBKKCMaSZB2H8pYx8w',
-                // 'Authorization' => 'Bearer wave_sn_prod_1Wd7rR4b1XD99dItFYf3lyV0VRzEQWjPxOTJAz7CIg8k_BUUqzaqkFxVv_AGWHAFnoow_KnQ6YFxeW3PMAUKx2RthBnuLnRESg',
             ])->post($url, [
-                "amount"        => 200,// $order['price'],
+                "amount"        => 20,// $order['price'],
                 "currency"      => "XOF",
                 "error_url"     => "https://sunuevents.sn/wave-return-url",
                 "success_url"   => "https://sunuevents.sn/wave-return-url"

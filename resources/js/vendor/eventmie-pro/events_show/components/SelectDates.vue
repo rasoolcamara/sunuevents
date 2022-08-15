@@ -284,6 +284,7 @@
             :is_offline_payment_organizer="is_offline_payment_organizer"
             :is_offline_payment_customer="is_offline_payment_customer"
             :booked_tickets="booked_tickets"
+            :organiser_id="this.organiser_id"
         >
         </ticket-component>
 
@@ -312,6 +313,7 @@ export default {
         'total_capacity',
         'booked_tickets',
         'currency',
+        'organiser_id'
     ],
 
     mixins:[
@@ -373,6 +375,7 @@ export default {
         // getSchedule
         getEventSchedule()
         {
+
             let post_url = route('eventmie.event_schedule') ;
             let post_data = {
                 'event_id'         : this.event.id,
@@ -763,6 +766,9 @@ export default {
                     }
                 }
             } 
+console.log("hjnf");
+console.log($this.booked_tickets);
+      console.log(this.organiser_id);
 
             // only return total_available in case of any booked ticket on a schedule.
             // calculate total_capacity - total_booked for each schedule

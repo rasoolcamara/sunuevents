@@ -5,7 +5,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Auth;
+// use Auth;
+use Illuminate\Support\Facades\Auth;
 use Classiebit\Eventmie\Services\PaypalExpress;
 use Classiebit\Eventmie\Models\Event;
 use Classiebit\Eventmie\Models\Ticket;
@@ -160,6 +161,9 @@ class BookingsController extends Controller
             'ticket_id'         => ['required', 'array'],
             'ticket_id.*'       => ['required', 'numeric'],
             
+            'full_name'         => [ 'required', 'string'],
+            'phone'             => [ 'required', 'string'],
+
             'quantity'          => [ 'required', 'array'],
             'quantity.*'        => [ 'required', 'numeric', 'integer', 'gte:0'],
 
@@ -820,7 +824,7 @@ class BookingsController extends Controller
             return true;
 
         // if it's Admin
-        if(Auth::user()->hasRole('admin'))
+        if(Auth::user() && Auth::user()->hasRole('admin'))
             return true;
 
         // get payment method

@@ -10,7 +10,20 @@
              </div>
            </div>
 
-             <form ref="form" @submit.prevent="" method="POST" >
+             <form ref="form" @submit.prevent="validateForm" method="POST" >
+                <input type="hidden" class="form-control" name="event_id" :value="tickets[0].event_id" >
+                <input type="hidden" class="form-control" name="organiser_id" :value="organiser_id" >
+                <input type="hidden" class="form-control" name="booking_date" :value="convert_date(moment(booking_date, 'dddd LL').format('dddd LL'))" >
+                <input type="hidden" class="form-control" name="booking_end_date"
+                      :value="(booking_end_date != null && typeof(booking_end_date) != 'undefined') ?
+                                convert_date(moment(booking_end_date, 'dddd LL').locale('en').format('dddd LL')) : null"
+                >
+                <input type="hidden" class="form-control" name="start_time" :value="convert_time(moment(start_time,'HH:mm a'))" >
+                <input type="hidden" class="form-control" name="end_time" :value="convert_time(moment(end_time,'HH:mm a'))" >
+                <input type="hidden" class="form-control" name="merge_schedule" :value="event.merge_schedule" >
+                <input type="hidden" name="customer_id" v-model="customer_id" v-validate="'required'" >
+
+
                <div class="form-group row">
                  <label for="full_name" class="col-sm-2 my-0">Nom Complet</label>
                  <div class="col-sm-10">
@@ -37,7 +50,7 @@
                      </li>
                      <li class="list-group-item d-flex justify-content-between">
                        <h6 class="my-0"><strong>{{ trans('em.total_order') }}</strong></h6>
-                       <strong :class="{'ticket-selected-text': bookedTicketsTotal() > 0 }">{{ total }} <small>{{currency}}</small></strong>
+                       <strong :class="{'ticket-selected-text': bookedTicketsTotal() > 0 }">{{ this.total }} <small>{{currency}}</small></strong>
                      </li>
                    </ul>
                  </div>
@@ -113,7 +126,7 @@
 
                <div class="row mt-5">
                  <div class="col-xs-12">
-                   <button :class="{ 'disabled' : disable }"  :disabled="disable" type="button" class="btn lgx-btn btn-block" @click="bookTickets"><i class="fas fa-cash-register"></i> {{ trans('em.checkout') }}</button>
+                   <button :class="{ 'disabled' : disable }"  :disabled="disable" type="button" class="btn lgx-btn btn-block" @click="bookTickets()"><i class="fas fa-cash-register"></i> {{ trans('em.checkout') }}</button>
                  </div>
                  <!-- <div class="col-xs-12">
                     <div class="btn-group btn-group-justified">
@@ -123,6 +136,110 @@
                   </div>-->
                </div>
 
+               <div>
+                 <!-- Tickets -->
+                <div class="col-md-12 d-none">
+                  <p class="mb-0 lead lead-caption text-center">{{ trans('em.tickets') }}</p>
+
+                  <ul class="list-group m-0">
+                    <li class="list-group-item d-flex justify-content-between lh-condensed d-flex-wrap"
+                        v-for="(item, index) in tickets"
+                        :key = "index">
+                      <input type="hidden" class="form-control" name="ticket_id[]" :value="item.id" >
+                      <input type="hidden" class="form-control" name="ticket_title[]" :value="item.title" >
+
+
+                      <div class="w-50">
+                        <h6 class="my-0"><strong>{{ item.title }}</strong></h6>
+                        <p class="mb-2">{{ item.price > 0 ? item.price : '0.00' }} <small>{{currency}}</small></p>
+
+                        <!-- show tax only if quantity is set -->
+                        <div class="event-tax" v-if="quantity[index] > 0 && item.price > 0 && item.taxes.length > 0">
+                          <div v-for="(tax, index1) in item.taxes" :key ="index1">
+                            <p>{{ tax.title }}
+                              <small>{{ total_price[index] > 0 ? countTax(item.price, tax.rate, tax.rate_type, tax.net_price, quantity[index]) : 0 }}</small>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="w-10 w-20-mobile">
+                        <!-- Live stock alert  -->
+                        <!-- if any booked tickets -->
+                        <div v-if='typeof(booked_tickets[item.id+"-"+booked_date_server]) != "undefined"
+                                              '>
+                          <select class="form-control form-input-sm"
+                                  name="quantity[]"
+                                  v-model="quantity[index]"
+                                  v-if='max_ticket_qty <= 100'
+                          >
+                            <option value="0" selected>0</option>
+                            <option :key="ind"
+                                    v-if="booked_tickets[item.id+'-'+booked_date_server].total_vacant <= max_ticket_qty"
+                                    :value="itm" v-for=" (itm, ind) in booked_tickets[item.id+'-'+booked_date_server].total_vacant"
+                            >{{itm }}</option>
+                            <option v-else :value="itm" v-for=" (itm, ind) in (item.quantity > max_ticket_qty ? max_ticket_qty : item.quantity)"  :key="ind">{{itm }}</option>
+                          </select>
+                          <input v-else type="number" name="quantity[]"
+                                v-model="quantity[index]" value="0" class="form-control form-input-sm"
+                                min="0" :max="booked_tickets[item.id+'-'+booked_date_server].total_vacant < max_ticket_qty ? booked_tickets[item.id+'-'+booked_date_server].total_vacant : max_ticket_qty"
+                          >
+                          <!-- Show if vacant less than max_ticket_qty -->
+                          <p class="text-info"
+                            v-if="booked_tickets[item.id+'-'+booked_date_server].total_vacant < max_ticket_qty && booked_tickets[item.id+'-'+booked_date_server].total_vacant > 0">
+                            <small><i class="fas fa-exclamation"></i> {{ trans('em.vacant') }}
+                              {{ booked_tickets[item.id+'-'+booked_date_server].total_vacant }}</small>
+                          </p>
+                          <p class="text-danger"
+                            v-if="booked_tickets[item.id+'-'+booked_date_server].total_vacant < max_ticket_qty && booked_tickets[item.id+'-'+booked_date_server].total_vacant <= 0">
+                            <small><i class="fas fa-times-circle"></i>  {{ trans('em.vacant') }} 0</small>
+                          </p>
+                        </div>
+                        <div v-else>
+                          <select class="form-control form-input-sm"
+                                  name="quantity[]"
+                                  v-model="quantity[index]"
+                                  v-if="max_ticket_qty <= 100"
+                          >
+                            <option value="0" selected>0</option>
+                            <option :value="itm" v-for=" (itm, ind) in item.quantity > max_ticket_qty ? max_ticket_qty : item.quantity"  :key="ind">{{itm }}</option>
+                          </select>
+                          <input v-else type="number" name="quantity[]" v-model="quantity[index]" value="0" class="form-control form-input-sm" min="0" :max="item.quantity > max_ticket_qty ? max_ticket_qty : item.quantity">
+                          <!-- Show if vacant less than max_ticket_qty -->
+                          <p class="text-info"
+                            v-if="item.quantity < max_ticket_qty && item.quantity > 0">
+                            <small><i class="fas fa-exclamation"></i> {{ trans('em.vacant') }}
+                              {{ item.quantity }}</small>
+                          </p>
+                          <p class="text-danger"
+                            v-if="item.quantity <= 0">
+                            <small><i class="fas fa-times-circle"></i>  {{ trans('em.vacant') }} 0</small>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="w-30 text-right">
+                        <strong>
+                          {{ total_price[index] ? total_price[index] : '0.00' }}
+                          <small>{{currency}}</small>
+                        </strong>
+                        <p v-if="quantity[index] > 0"><i class="fas fa-check-circle ticket-selected-text"></i></p>
+                      </div>
+
+
+                      <div class="break-flex">
+                        <!-- hide/show below ticket description -->
+                        <a class="pointer ticket-info-toggle" @click="ticket_info = !ticket_info">
+                          <small v-if="ticket_info">{{ trans('em.hide_info') }}</small>
+                          <small v-else>{{ trans('em.show_info') }}</small>
+                        </a>
+                        <p class="ticket-info" v-if="ticket_info">{{ item.description }}</p>
+                      </div>
+
+                    </li>
+                  </ul>
+                </div>
+               </div>
              </form>
              <form action="https://api.paiementorangemoney.com" method="POST" ref="form_om"  >
                <input type="hidden" name="S2M_IDENTIFIANT" :value="om_config.identifiant">
@@ -165,19 +282,24 @@ export default {
     'login_user_id',
     'is_admin',
     'is_organiser',
+    'total',
+    'quantity',
+    'total_price',
     'is_customer',
     'is_paypal',
     'is_offline_payment_organizer',
     'is_offline_payment_customer',
-    'booked_tickets'
+    'booked_tickets',
+    'organiser_id'
   ],
 
   data() {
     return {
       ticket_info         : false,
       moment              : moment,
-      quantity            : [1],
+      // quantity            : [1],
       price               : null,
+      // total               : 0,
       full_name           : null,
       phone               : null,
       disable             : false,
@@ -211,7 +333,7 @@ export default {
 
     // reset form and close modal
     close: function () {
-      this.price = null;
+      /* this.price = null;
       this.quantity = [];
       this.total_price = [];
 
@@ -221,12 +343,12 @@ export default {
         booking_end_date: null,
         start_time: null,
         end_time: null,
-      })
+      }) */
 
 
       this.showModal = false;
     },
-  bookTickets(){
+  bookTickets() {
     // show loader
     this.showLoaderNotification(trans('em.processing'));
 
@@ -375,6 +497,7 @@ export default {
 
   // count total price
   totalPrice(){
+    console.log("sjdkfn");
     if(this.quantity != null || this.quantity.length > 0)
     {
       let amount;
@@ -478,8 +601,14 @@ export default {
 
   // total booked tickets
   bookedTicketsTotal() {
+    console.log('bookedTicketsTotal bookedTicketsTotal bookedTicketsTotal');
+    console.log(this.total);
+    console.log(this.quantity);
+    console.log(this.tickets);
+    console.log(this.organiser_id);
+
     let  total = 0
-    if(this.quantity.length > 0)
+    if(this.quantity != null && this.quantity.length > 0)
     {
       this.quantity.forEach(function(value, key){
         total = parseInt(total) + parseInt(value);
@@ -488,6 +617,7 @@ export default {
 
       return total;
     }
+    // return this.total
     return 0;
   },
 
@@ -560,11 +690,12 @@ export default {
 
 },
 watch: {
-  quantity: function () {
-    this.totalPrice();
-    this.orderTotal();
-    this.defaultPaymentMethod();
-  },
+  // quantity: function () {
+  //   this.totalPrice();
+  //   this.orderTotal();
+  //   this.defaultPaymentMethod();
+  // },
+
   tickets: function() {
     this.setDefaultQuantity();
     this.totalPrice();
@@ -580,6 +711,8 @@ watch: {
   mounted() {
 
     this.showModal = true;
+    this.defaultPaymentMethod();
+
   },
 }
 </script>

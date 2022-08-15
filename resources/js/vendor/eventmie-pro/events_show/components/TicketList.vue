@@ -11,7 +11,6 @@
           </div>
 
           <form ref="formTest" @submit.prevent="validateForm" method="POST" >
-
             <input type="hidden" class="form-control" name="event_id" :value="tickets[0].event_id" >
             <input type="hidden" class="form-control" name="booking_date" :value="convert_date(moment(booking_date, 'dddd LL').format('dddd LL'))" >
             <input type="hidden" class="form-control" name="booking_end_date"
@@ -22,6 +21,7 @@
             <input type="hidden" class="form-control" name="end_time" :value="convert_time(moment(end_time,'HH:mm a'))" >
             <input type="hidden" class="form-control" name="merge_schedule" :value="event.merge_schedule" >
             <input type="hidden" name="customer_id" v-model="customer_id" v-validate="'required'" >
+            
 
 
             <div class="row">
@@ -195,7 +195,7 @@
               </div>
             </div>
 
-            <div class="row mt-5">
+            <div class="row mt-5" v-if="bookedTicketsTotal() > 0">
               <div class="col-xs-12">
                 <button :class="{ 'disabled' : disable }"  :disabled="disable" type="button" class="btn lgx-btn btn-block" @click="checkout()"><i class="fas fa-cash-register"></i> Acheter maintenant</button>
               </div>
@@ -207,7 +207,7 @@
       </div>
     </div>
 
-    <checkout-ticket v-if="showModal && !openModal"
+    <checkout-ticket v-if="showModal && !openModal" 
                      :event="event"
                      :tickets="tickets"
                      :max_ticket_qty="max_ticket_qty"
@@ -220,9 +220,10 @@
                      :is_offline_payment_organizer="is_offline_payment_organizer"
                      :is_offline_payment_customer="is_offline_payment_customer"
                      :booked_tickets="booked_tickets"
-                      :total_price="total_price"
-                     :total="total"
-                     :quatity="quantity">
+                     :total_price="total_price"
+                     :total="this.total"
+                     :quantity="this.quantity"
+                     :organiser_id="organiser_id">
     </checkout-ticket>
 
   </div>
@@ -256,7 +257,8 @@ export default {
     'is_paypal',
     'is_offline_payment_organizer',
     'is_offline_payment_customer',
-    'booked_tickets'
+    'booked_tickets',
+    'organiser_id',
   ],
 
   data() {
@@ -265,7 +267,7 @@ export default {
       showModal           : false,
       ticket_info         : false,
       moment              : moment,
-      quantity            : [1],
+      quantity            : [],
       price               : null,
       total_price         : [],
       customer_id         : 0,
@@ -322,13 +324,13 @@ export default {
       this.openModal      = false;
       this.showModal      = false;
     },
-     checkout(){
-       this.openModal      = false;
-       this.showModal = true;
-     },
 
-    bookTickets(){
+    checkout(){
+      this.openModal = false;
+      this.showModal = true;
+    },
 
+    bookTickets() {
 
       // show loader
       this.showLoaderNotification(trans('em.processing'));
@@ -419,7 +421,6 @@ export default {
           });
     },
 
-
     // validate data on form submit
     validateForm(e) {
       this.$validator.validateAll().then((result) => {
@@ -440,7 +441,6 @@ export default {
         this.$validator.errors.add(serrors);
       });
     },
-
 
     // count total tax
     countTax(price, tax, rate_type, net_price, quantity) {
@@ -477,7 +477,7 @@ export default {
     },
 
     // count total price
-    totalPrice(){
+    totalPrice() {
       if(this.quantity != null || this.quantity.length > 0)
       {
         let amount;
@@ -581,6 +581,12 @@ export default {
 
     // total booked tickets
     bookedTicketsTotal() {
+      console.log('bookedTicketsTotal');
+      console.log(this.total);
+      console.log(this.quantity);
+      console.log(this.organiser_id);
+      
+
       let  total = 0
       if(this.quantity.length > 0)
       {
@@ -604,6 +610,7 @@ export default {
     loginFirst() {
       window.location.href = route('eventmie.login_first');
     },
+
     signupFirst() {
       window.location.href = route('eventmie.signup_first');
     },
