@@ -290,7 +290,7 @@ export default {
     'is_offline_payment_organizer',
     'is_offline_payment_customer',
     'booked_tickets',
-    'organiser_id'
+    'organiser_id',
   ],
 
   data() {
@@ -605,7 +605,6 @@ export default {
     console.log(this.total);
     console.log(this.quantity);
     console.log(this.tickets);
-    console.log(this.organiser_id);
 
     let  total = 0
     if(this.quantity != null && this.quantity.length > 0)
@@ -709,10 +708,11 @@ watch: {
 
 },
   mounted() {
+    console.log("tickets");
+    console.log(booked_tickets);
 
     this.showModal = true;
     this.defaultPaymentMethod();
-
   },
 }
 </script>

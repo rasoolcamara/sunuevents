@@ -11,8 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Eventmie\BookingsController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-
-
+use Illuminate\Support\Facades\Http;
 
 class CallbackController extends BaseBookingsController
 {
@@ -104,10 +103,10 @@ class CallbackController extends BaseBookingsController
         
         // if customer then redirect to mybookings
         $url = route('eventmie.mybookings_index');
-        if(Auth::user()->hasRole('organiser'))
+        if(Auth::user() && Auth::user()->hasRole('organiser'))
             $url = route('eventmie.obookings_index');
         
-        if(Auth::user()->hasRole('admin'))
+        if(Auth::user() && Auth::user()->hasRole('admin'))
             $url = route('voyager.bookings.index');
 
         try
@@ -147,5 +146,30 @@ class CallbackController extends BaseBookingsController
         }
 
         // return $this->finish_checkout($flag);
+    }
+
+    public function sendWhatsappSMS()
+    {
+        $url = 'https://graph.facebook.com/v13.0/112614378223120/messages';
+
+        $response = Http::withHeaders([
+            'Content-Type'  => 'application/json',
+            'Authorization' => 'Bearer ',
+        ])->post($url, [
+            "messaging_product"    => "whatsapp",
+            "to"                   => "221775779393",
+            "type"                 => "template",
+            "template"             => [
+                "name"             => "hello_world",
+                "language"         => [
+                    "code"         => "en_US",
+                ],
+            ],
+        ]);
+
+        $body = $response->json();
+
+        logger($body);
+        return $body;
     }
 }

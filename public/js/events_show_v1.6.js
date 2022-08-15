@@ -3179,7 +3179,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       console.log(this.total);
       console.log(this.quantity);
       console.log(this.tickets);
-      console.log(this.organiser_id);
       var total = 0;
 
       if (this.quantity != null && this.quantity.length > 0) {
@@ -3264,6 +3263,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   mounted: function mounted() {
+    console.log("tickets");
+    console.log(booked_tickets);
     this.showModal = true;
     this.defaultPaymentMethod();
   }
@@ -4195,7 +4196,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       showModal: false,
       ticket_info: false,
       moment: moment,
-      quantity: [],
+      quantity: [1],
       price: null,
       total_price: [],
       customer_id: 0,
@@ -4524,8 +4525,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   mounted: function mounted() {
-    this.openModal = true; // this.setDefaultQuantity();
-
+    this.openModal = true;
+    this.setDefaultQuantity();
     this.defaultPaymentMethod();
   }
 });

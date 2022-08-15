@@ -267,7 +267,7 @@ export default {
       showModal           : false,
       ticket_info         : false,
       moment              : moment,
-      quantity            : [],
+      quantity            : [1],
       price               : null,
       total_price         : [],
       customer_id         : 0,
@@ -499,6 +499,7 @@ export default {
 
             }.bind(this))
           }
+
           if(this.tickets[key].taxes.length > 0 && amount > 0) {
 
             this.tickets[key].taxes.forEach(function(tax_v, tax_k) {
@@ -690,7 +691,7 @@ export default {
 
   mounted() {
     this.openModal = true;
-   // this.setDefaultQuantity();
+    this.setDefaultQuantity();
     this.defaultPaymentMethod();
   },
 }

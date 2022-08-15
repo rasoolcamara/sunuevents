@@ -791,7 +791,6 @@ console.log($this.booked_tickets);
         
         if(this.event.repetitive > 0)
             this.getEventSchedule();
-        
     },  
 }
 </script>

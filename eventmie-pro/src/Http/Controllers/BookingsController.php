@@ -154,7 +154,6 @@ class BookingsController extends Controller
     // validate user post data
     protected function general_validation(Request $request)
     {
-        
         $request->validate([
             'event_id'          => 'required|numeric|gte:1',
             
@@ -162,7 +161,7 @@ class BookingsController extends Controller
             'ticket_id.*'       => ['required', 'numeric'],
             
             'full_name'         => [ 'required', 'string'],
-            'phone'             => [ 'required', 'string'],
+            'phone'             => [ 'required', 'numeric'],
 
             'quantity'          => [ 'required', 'array'],
             'quantity.*'        => [ 'required', 'numeric', 'integer', 'gte:0'],

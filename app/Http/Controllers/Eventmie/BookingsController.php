@@ -43,6 +43,7 @@ class BookingsController extends BaseBookingsController
 
         // 1. General validation and get selected ticket and event id
         $data = $this->general_validation($request);
+
         if(!$data['status'])
             return error($data['error'], Response::HTTP_BAD_REQUEST);
 
