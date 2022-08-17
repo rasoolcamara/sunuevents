@@ -12,8 +12,14 @@ require('../../../../../eventmie-pro/resources/js/vue_common');
 */
 /* Instances */
 import Vuex from 'vuex';
+
+// import Vue from "vue";
+import VueCountryCode from "vue-country-code-select";
+
 window.Vuex = Vuex;
 Vue.use(Vuex);
+
+Vue.use(VueCountryCode);
 
 /* Components */
 Vue.component('v-select', require('vue-select').default);

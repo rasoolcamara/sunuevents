@@ -148,19 +148,19 @@ class CallbackController extends BaseBookingsController
         // return $this->finish_checkout($flag);
     }
 
-    public function sendWhatsappSMS()
+    public function sendWhatsappSMS($phone, $message)
     {
         $url = 'https://graph.facebook.com/v13.0/112614378223120/messages';
 
         $response = Http::withHeaders([
             'Content-Type'  => 'application/json',
-            'Authorization' => 'Bearer ',
+            'Authorization' => 'Bearer EAAJFPyV9QE8BAJISTCmT5DXEk78FDNHG5g6MHgc5MqNQCm1seREksGLuhvpxYyHqCns33FEicL5fX7ZAdxSGRvrcBGkYWeIsf7ZCKtMQPrpLA1jJTnUhfmx1n81ZBrgpH2xNvZA7BEFzkoOl3Vke2ZBFvs1EG7wJjJwZATaZCazNBwDSRwQQA3hPqdXwFcJUA0GyPoBfHYWbU62GtdnCR4z',
         ])->post($url, [
             "messaging_product"    => "whatsapp",
-            "to"                   => "221775779393",
+            "to"                   => $phone,
             "type"                 => "template",
             "template"             => [
-                "name"             => "hello_world",
+                "name"             => $message,
                 "language"         => [
                     "code"         => "en_US",
                 ],

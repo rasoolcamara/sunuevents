@@ -49,5 +49,9 @@
         "vue2-google-maps": "^0.10.7",
         "vuex": "^3.5.1",
         "webpack": "^5.25.0"
+    },
+    "dependencies": {
+        "vue-country-code": "^1.1.3",
+        "vue-country-code-select": "^1.6.7"
     }
 }

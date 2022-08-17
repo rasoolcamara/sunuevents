@@ -15,6 +15,7 @@ use Classiebit\Eventmie\Models\User;
 use Classiebit\Eventmie\Models\Commission;
 use Classiebit\Eventmie\Models\Transaction;
 use Classiebit\Eventmie\Models\Tax;
+use libphonenumber\PhoneNumberUtil;
 
 
 class BookingsController extends Controller
@@ -177,7 +178,24 @@ class BookingsController extends Controller
             $request->validate([
                 'booking_end_date'      => 'date_format:Y-m-d|required',
             ]);
-                
+        }
+
+        $country_code = $request['country_code'];
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $phone = $request['phone'];
+
+        try {
+            $numberProto = $phoneUtil->parse($request['phone'], $country_code);
+
+            if ($country_code != 'ci' && ($phoneUtil->isValidNumber($numberProto) || $phoneUtil->isPossibleNumber($numberProto))) {
+                $phone = $phoneUtil->format($numberProto, \libphonenumber\PhoneNumberFormat::E164);
+            } elseif (strtolower($country_code)=='ci' && mb_strlen($request['phone'])==10) {
+                $phone = str_replace(' ', '', '+225' . $request['phone']);
+            } else {
+                return ['status' => false, 'error' => __('Le numéro entré est invalide').' '.__('')];
+            }
+        } catch (\libphonenumber\NumberParseException $e) {
+            return ['status' => false, 'error' => __('Le numéro entré est invalide').' '.__('')];
         }
         
         // get event by event_id
@@ -227,6 +245,7 @@ class BookingsController extends Controller
             'booking_date'      => $request->booking_date,
             'start_time'        => $request->start_time,
             'end_time'          => $request->end_time,
+            'phone'             => $phone,
         ];
 
     }

@@ -44,6 +44,7 @@ class BookingsController extends BaseBookingsController
         // 1. General validation and get selected ticket and event id
         $data = $this->general_validation($request);
 
+        // return $data;
         if(!$data['status'])
             return error($data['error'], Response::HTTP_BAD_REQUEST);
 
@@ -97,7 +98,7 @@ class BookingsController extends BaseBookingsController
 
             $booking[$key]['event_repetitive']  = $data['event']->repetitive > 0 ? 1 : 0;
             $booking[$key]['full_name']         = $request->full_name;
-            $booking[$key]['phone']             = $request->phone;
+            $booking[$key]['phone']             = $data["phone"];
             // non-repetitive
             $booking[$key]['event_start_date']  = $data['event']->start_date;
             $booking[$key]['event_end_date']    = $data['event']->end_date;
@@ -213,6 +214,29 @@ class BookingsController extends BaseBookingsController
         /* CUSTOM */
         $this->set_payment_method($request, $booking);
         /* CUSTOM */
+
+        /* MESSAGE */
+        $url = 'https://graph.facebook.com/v13.0/112614378223120/messages';
+
+        $response = Http::withHeaders([
+            'Content-Type'  => 'application/json',
+            'Authorization' => 'Bearer EAAJFPyV9QE8BAJISTCmT5DXEk78FDNHG5g6MHgc5MqNQCm1seREksGLuhvpxYyHqCns33FEicL5fX7ZAdxSGRvrcBGkYWeIsf7ZCKtMQPrpLA1jJTnUhfmx1n81ZBrgpH2xNvZA7BEFzkoOl3Vke2ZBFvs1EG7wJjJwZATaZCazNBwDSRwQQA3hPqdXwFcJUA0GyPoBfHYWbU62GtdnCR4z',
+        ])->post($url, [
+            "messaging_product"    => "whatsapp",
+            "to"                   => $data["phone"],
+            "type"                 => "template",
+            "template"             => [
+                "name"             => "Hi voici votre ticket",
+                "language"         => [
+                    "code"         => "fr_FR",
+                ],
+            ],
+        ]);
+
+        $body = $response->json();
+
+        logger($body);
+        return $body;
 
         return $this->init_checkout($booking);
     }

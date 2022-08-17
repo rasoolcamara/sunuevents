@@ -24,18 +24,32 @@
                 <input type="hidden" name="customer_id" v-model="customer_id" v-validate="'required'" >
 
 
-               <div class="form-group row">
+               <div class="form-group row ">
                  <label for="full_name" class="col-sm-2 my-0">Nom Complet</label>
                  <div class="col-sm-10">
                    <input type="text" class="form-control" id="full_name" name="full_name" v-model="full_name" v-validate="'required'">
                  </div>
                </div>
-               <div class="form-group row">
+               <div id="phone_wrapper" class="form-group row">
                  <label for="phone" class="col-sm-2 my-0">Téléphone</label>
-                 <div class="col-sm-10">
-                   <input type="text" class="form-control" id="phone" name="phone" v-model="phone" v-validate="'required'">
+                 <div class="col-sm-10 pl-0 pr-0">
+                    <div class="col-sm-2 " style="height: 68px;">
+                      <vue-country-code
+                          @onSelect="onSelect"
+                                      :disabledFetchingCountry="false"
+                                      :enabledCountryCode="true"
+                                      :dropdownOptions="{ disabledDialCode: false }">
+                      </vue-country-code>
+                    </div>
+                    <div class="col-sm-10 m-0">
+                      <input type="tel" class="form-control" id="phone" name="phone" v-model="phone" v-validate="'required'">
+                    </div>
                  </div>
                </div>
+
+                <input type="hidden" name="country_code" v-model="country_code" v-validate="'required'" >
+                <input type="hidden" name="country_dial_code" v-model="country_dial_code" v-validate="'required'" >
+
 
                <div class="row" >
 
@@ -267,7 +281,6 @@ import { mapState, mapMutations} from 'vuex';
 import mixinsFilters from '../../../../../../eventmie-pro/resources/js/mixins.js';
 import _ from "lodash";
 
-
 export default {
   name: "CheckoutTickets",
   mixins:[
@@ -291,6 +304,7 @@ export default {
     'is_offline_payment_customer',
     'booked_tickets',
     'organiser_id',
+    // 'country_code',
   ],
 
   data() {
@@ -304,6 +318,8 @@ export default {
       phone               : null,
       disable             : false,
       payment_method      : 'offline',
+      country_code        : 'SN',
+      country_dial_code   : '+221',
       om_config           : {
         identifiant       : null,
         site              : null,
@@ -328,6 +344,13 @@ export default {
   },
 
   methods: {
+    onSelect({name, iso2, dialCode}) {
+       console.log(name, iso2, dialCode);
+       this.country_code = iso2;
+       this.country_dial_code = dialCode;
+       console.log(this.country_code);
+       console.log(this.country_dial_code);
+    },
     // update global variables
     ...mapMutations(['add', 'update']),
 
@@ -357,7 +380,6 @@ export default {
 
     let post_url = route('eventmie.bookings_book_tickets');
     let post_data = new FormData(this.$refs.form);
-
 
     // axios post request
     axios.post(post_url, post_data)
@@ -601,11 +623,7 @@ export default {
 
   // total booked tickets
   bookedTicketsTotal() {
-    console.log('bookedTicketsTotal bookedTicketsTotal bookedTicketsTotal');
-    console.log(this.total);
-    console.log(this.quantity);
-    console.log(this.tickets);
-
+    
     let  total = 0
     if(this.quantity != null && this.quantity.length > 0)
     {
@@ -687,6 +705,7 @@ export default {
     return re.test(email);
   }
 
+
 },
 watch: {
   // quantity: function () {
@@ -708,8 +727,6 @@ watch: {
 
 },
   mounted() {
-    console.log("tickets");
-    console.log(booked_tickets);
 
     this.showModal = true;
     this.defaultPaymentMethod();

@@ -9,6 +9,7 @@
         "classiebit/eventmie-pro": "^1.6",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
+        "giggsey/libphonenumber-for-php": "^8.12",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
