@@ -9,6 +9,8 @@ use Classiebit\Eventmie\Models\Transaction;
 use Classiebit\Eventmie\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Eventmie\BookingsController;
+use App\Models\TicketMessage;
+use App\Utilities\CRMAPI;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -21,6 +23,7 @@ class CallbackController extends BaseBookingsController
     {
         logger("Le callback de wave");
         logger($request->all());
+        $this->waveCallbackResponse($request);
     }
 
     public function om_senegal_callback(Request $request)
@@ -53,7 +56,6 @@ class CallbackController extends BaseBookingsController
         }
     }
 
-
     public function om_senegal_return_url(Request $request)
     {
         logger("Le return url de om");
@@ -69,7 +71,7 @@ class CallbackController extends BaseBookingsController
             'txn_id' => $data['ref_transaction']
         ]);
 
-// if customer then redirect to mybookings
+        // if customer then redirect to mybookings
         $url = route('eventmie.mybookings_index');
 
         if($user->hasRole('organiser'))
@@ -102,18 +104,63 @@ class CallbackController extends BaseBookingsController
         logger($request);
         
         // if customer then redirect to mybookings
-        $url = route('eventmie.mybookings_index');
-        if(Auth::user() && Auth::user()->hasRole('organiser'))
-            $url = route('eventmie.obookings_index');
-        
-        if(Auth::user() && Auth::user()->hasRole('admin'))
-            $url = route('voyager.bookings.index');
+        // $url = route('eventmie.mybookings_index');
+        $url = route('eventmie.events_index');
 
+        try
+        {
+           // redirect no matter what so that it never turns back
+           $msg = __('eventmie-pro::em.booking_success');
+           session()->flash('status', $msg);
+
+           return success_redirect($msg, $url);
+        } catch (\Throwable $th) {
+            // fail case
+            $flag = [
+                'status'    => false,
+                'error'     => $th->getMessage(),
+            ];
+
+            // if fail
+            // redirect no matter what so that it never turns back
+            $msg = __('eventmie-pro::em.payment').' '.__('eventmie-pro::em.failed');
+            session()->flash('error', $msg);
+            
+                /* CUSTOM */
+            return redirect($url)->withErrors([__('eventmie-pro::em.booking').' '.__('eventmie-pro::em.failed')]);
+        }
+
+        // return $this->finish_checkout($flag);
+    }
+	
+	public function waveCallbackResponse(Request $request)
+    {
+        // IMPORTANT!!! clear session data setted during checkout process
+        session()->forget(['pre_payment', 'booking', 'payment_method']);
+        
+        /* CUSTOM */  
+        /* CUSTOM */  
+		logger("Le CUSTOMERR");
+        logger(Auth::user());
+		logger("request");
+        logger($request);
+        
+        // if customer then redirect to mybookings
+        // $url = route('eventmie.mybookings_index');
+        $url = route('eventmie.events_index');
+
+        // if(Auth::user() && Auth::user()->hasRole('organiser'))
+        //     $url = route('eventmie.obookings_index');
+        
+        // if(Auth::user() && Auth::user()->hasRole('admin'))
+        //     $url = route('voyager.bookings.index');
+
+        
         try
         {
             if($request['data']['payment_status'] == 'succeeded') 
             {
-                $transaction = Transaction::where('txn_idtxn_id', $request['data']['id'])->first();
+                $transaction = Transaction::where('txn_id', $request['data']['id'])->first();
 
                 $transaction->update([
                     "payment_status"    => "payment_status",
@@ -125,7 +172,30 @@ class CallbackController extends BaseBookingsController
                 // redirect no matter what so that it never turns back
                 $msg = __('eventmie-pro::em.booking_success');
                 session()->flash('status', $msg);
-                
+
+                // $url = route('eventmie.downloads_index', [$booking->id, $booking->order_number]);
+
+                // $message = "Bonjour ".$booking->full_name." \nVeuillez retrouver le ticket de votre réservation. NB: Ce ticket reste confidentiel jusqu'à votre accés à l'évenement.\n".$url;
+                // (new CRMAPI())->authCRM($booking->phone, $message);
+
+                /* MESSAGE */
+
+                $ticketMsg = TicketMessage::where("booking_id", $booking->id)->where("phone", $booking->phone)->first();
+
+                if (!$ticketMsg) {
+                    $ticket_url = route('eventmie.downloads_index', [$booking->id, $booking->order_number]);
+    
+                    $message = "Bonjour ".$booking->full_name.", \nVeuillez retrouver le ticket de votre réservation.\n".$ticket_url;
+                    (new CRMAPI())->authCRM($booking->phone, $message);
+
+                    TicketMessage::create([
+                        "booking_id"    => $booking->id,
+                        "name"          => $booking->full_name,
+                        "phone"         => $booking->phone,
+                        "message"       => $message,
+                    ]);
+                }
+
                 return success_redirect($msg, $url);
             }
             
@@ -146,30 +216,5 @@ class CallbackController extends BaseBookingsController
         }
 
         // return $this->finish_checkout($flag);
-    }
-
-    public function sendWhatsappSMS($phone, $message)
-    {
-        $url = 'https://graph.facebook.com/v13.0/112614378223120/messages';
-
-        $response = Http::withHeaders([
-            'Content-Type'  => 'application/json',
-            'Authorization' => 'Bearer EAAJFPyV9QE8BAJISTCmT5DXEk78FDNHG5g6MHgc5MqNQCm1seREksGLuhvpxYyHqCns33FEicL5fX7ZAdxSGRvrcBGkYWeIsf7ZCKtMQPrpLA1jJTnUhfmx1n81ZBrgpH2xNvZA7BEFzkoOl3Vke2ZBFvs1EG7wJjJwZATaZCazNBwDSRwQQA3hPqdXwFcJUA0GyPoBfHYWbU62GtdnCR4z',
-        ])->post($url, [
-            "messaging_product"    => "whatsapp",
-            "to"                   => $phone,
-            "type"                 => "template",
-            "template"             => [
-                "name"             => $message,
-                "language"         => [
-                    "code"         => "en_US",
-                ],
-            ],
-        ]);
-
-        $body = $response->json();
-
-        logger($body);
-        return $body;
     }
 }

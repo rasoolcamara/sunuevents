@@ -386,7 +386,7 @@ return [
 
     // v1.5 lang
     'max_ticket_qty'                    => 'Limite de quantité maximale de billets',
-    'booking_success'                   => 'Félicitations! Réservation réussie. ',
+    'booking_success'                   => 'Félicitations! Réservation réussie. Vous receverez un message avec le lien du ticket !',
     'booking_email_sent'                => "E-mail de réservation envoyé.",
     'register_success'                  => 'Félicitations! Inscription réussi.',
     'booking_cancellation_fail'         => "Lannulation de la réservation a échoué",

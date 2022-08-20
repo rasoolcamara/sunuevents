@@ -50,7 +50,6 @@
                 <input type="hidden" name="country_code" v-model="country_code" v-validate="'required'" >
                 <input type="hidden" name="country_dial_code" v-model="country_dial_code" v-validate="'required'" >
 
-
                <div class="row" >
 
                  <!-- Cart Totals -->

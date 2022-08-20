@@ -29,7 +29,7 @@ class DownloadsController extends Controller
         $this->middleware('common');
 
         // download only after login
-        $this->middleware('auth');
+        // $this->middleware('auth');
     
         $this->event        = new Event;
         $this->ticket       = new Ticket;
@@ -45,8 +45,8 @@ class DownloadsController extends Controller
      */
     public function index($id = NULL, $order_number = NULL)
     {
-        if(!empty(setting('booking.hide_ticket_download')) &&(Auth::user()->hasRole('organiser') || Auth::user()->hasRole('customer')))
-            abort('404');
+        // if(!empty(setting('booking.hide_ticket_download')) && (Auth::user()->hasRole('organiser') || Auth::user()->hasRole('customer')))
+        //     abort('404');
             
         $id             = (int) $id;
         $order_number   = trim($order_number);
@@ -58,15 +58,15 @@ class DownloadsController extends Controller
 
         $booking = $booking[0];
 
-        // customer can see only their bookings
-        if(Auth::user()->hasRole('customer'))
-            if($booking['customer_id'] != Auth::id())
-                abort('404');
+        // // customer can see only their bookings
+        // if(Auth::user() && Auth::user()->hasRole('customer'))
+        //     if($booking['customer_id'] != Auth::id())
+        //         abort('404');
 
-        // organiser can see only their events bookings
-        if(Auth::user()->hasRole('organiser'))
-            if($booking['organiser_id'] != Auth::id())
-                abort('404');
+        // // organiser can see only their events bookings
+        // if(Auth::user() && Auth::user()->hasRole('organiser'))
+        //     if($booking['organiser_id'] != Auth::id())
+        //         abort('404');
         
         // generate QrCode
         $qrcode_data = [

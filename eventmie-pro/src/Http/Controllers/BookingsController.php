@@ -1,7 +1,8 @@
 <?php           
 
 namespace Classiebit\Eventmie\Http\Controllers;
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
+use App\Utilities\CRMAPI;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -640,6 +641,7 @@ class BookingsController extends Controller
         // delete commission data from session
         session()->forget(['commission']);
         $booking_data = [];
+
         foreach($booking as $key => $value)
         {
             $data     = $this->booking->make_booking($params[$key]);
@@ -655,6 +657,15 @@ class BookingsController extends Controller
                 $commission_data[$key]['status']       = $data->is_paid > 0 ? 1 : 0; 
             }
         }
+
+        // logger("data");
+        // logger($data);
+
+        // /* MESSAGE */
+        // $url = route('eventmie.downloads_index', [$data->id, $data->order_number]);
+
+        // $message = "Bonjour ".$data->full_name." \nVeuillez retrouver le ticket de votre réservation.\n".$url;
+        // (new CRMAPI())->authCRM($data->phone, $message);
         
         // insert data in commission table
         $this->commission->add_commission($commission_data);

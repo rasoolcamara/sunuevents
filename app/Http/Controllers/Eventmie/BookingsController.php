@@ -214,30 +214,7 @@ class BookingsController extends BaseBookingsController
         /* CUSTOM */
         $this->set_payment_method($request, $booking);
         /* CUSTOM */
-
-        /* MESSAGE */
-        $url = 'https://graph.facebook.com/v13.0/112614378223120/messages';
-
-        $response = Http::withHeaders([
-            'Content-Type'  => 'application/json',
-            'Authorization' => 'Bearer EAAJFPyV9QE8BAJISTCmT5DXEk78FDNHG5g6MHgc5MqNQCm1seREksGLuhvpxYyHqCns33FEicL5fX7ZAdxSGRvrcBGkYWeIsf7ZCKtMQPrpLA1jJTnUhfmx1n81ZBrgpH2xNvZA7BEFzkoOl3Vke2ZBFvs1EG7wJjJwZATaZCazNBwDSRwQQA3hPqdXwFcJUA0GyPoBfHYWbU62GtdnCR4z',
-        ])->post($url, [
-            "messaging_product"    => "whatsapp",
-            "to"                   => $data["phone"],
-            "type"                 => "template",
-            "template"             => [
-                "name"             => "Hi voici votre ticket",
-                "language"         => [
-                    "code"         => "fr_FR",
-                ],
-            ],
-        ]);
-
-        $body = $response->json();
-
-        logger($body);
-        return $body;
-
+        
         return $this->init_checkout($booking);
     }
 
@@ -310,12 +287,14 @@ class BookingsController extends BaseBookingsController
         /* CUSTOM */
 
         // if customer then redirect to mybookings
-        $url = route('eventmie.mybookings_index');
-        if(Auth::user()->hasRole('organiser'))
-            $url = route('eventmie.obookings_index');
+        $url = route('eventmie.events_index');
 
-        if(Auth::user()->hasRole('admin'))
-            $url = route('voyager.bookings.index');
+        // $url = route('eventmie.mybookings_index');
+        // if(Auth::user()->hasRole('organiser'))
+        //     $url = route('eventmie.obookings_index');
+
+        // if(Auth::user()->hasRole('admin'))
+        //     $url = route('voyager.bookings.index');
 
         ///
         /// if success 
@@ -528,10 +507,10 @@ class BookingsController extends BaseBookingsController
                 'Content-Type'  => 'application/json',
                 'Authorization' => 'Bearer wave_sn_prod_a0NVjFwZbobr_t5aPnfgR76tOv22ApBAiMo5U9D7T27SOgHWBd0munUrFsw-0bENBdAqOzfdTsu2TSRVakhzI0O_Bt0HVbIOjQ',
             ])->post($url, [
-                "amount"        => 20,// $order['price'],
+                "amount"        => $order['price'],
                 "currency"      => "XOF",
-                "error_url"     => "https://sunuevents.sn/wave-return-url",
-                "success_url"   => "https://sunuevents.sn/wave-return-url"
+                "error_url"     => "https://sunuevents.sn/events",
+                "success_url"   => "https://sunuevents.sn/events"
             ]);
 
             $body = $response->json();
