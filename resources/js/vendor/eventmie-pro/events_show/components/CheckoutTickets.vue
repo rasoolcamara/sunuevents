@@ -1,10 +1,10 @@
 <template>
     <div>
-     <div class="modal modal-mask">
+     <div class="modal modal-mask" v-if="showModal">
        <div class="modal-dialog modal-container modal-lg">
          <div class="modal-content">
            <div class="modal-header">
-             <button type="button" class="close" @click="close()"><span aria-hidden="true">&times;</span></button>
+             <button type="button" class="close" @click="close"><span aria-hidden="true">&times;</span></button>
              <div class="text-center">
                <h3 class="title ticket-selected-text mb-4">{{ trans('em.checkout') }}</h3>
              </div>
@@ -36,8 +36,10 @@
                     <div class="col-sm-2 " style="height: 68px;">
                       <vue-country-code
                           @onSelect="onSelect"
+                                      :enableSearchField="true"
                                       :disabledFetchingCountry="false"
                                       :enabledCountryCode="true"
+                                      :onlyCountries="['sn', 'fr', 'us','ml', 'gm', 'mr', 'gn']"
                                       :dropdownOptions="{ disabledDialCode: false }">
                       </vue-country-code>
                     </div>
@@ -257,7 +259,7 @@
              <form action="https://api.paiementorangemoney.com" method="POST" ref="form_om"  >
                <input type="hidden" name="S2M_IDENTIFIANT" :value="om_config.identifiant">
                <input type="hidden" name="S2M_SITE" :value="om_config.site">
-               <input type="hidden" name="S2M_TOTAL" :value="200">
+               <input type="hidden" name="S2M_TOTAL" :value="om_config.total">
                <input type="hidden" name="S2M_REF_COMMANDE" :value="om_config.ref_commande">
                <input type="hidden" name="S2M_COMMANDE" :value="om_config.commande">
                <input type="hidden" name="S2M_DATEH" :value="om_config.dateh">
@@ -267,9 +269,6 @@
          </div>
        </div>
      </div>
-
-
-
    </div>
 
 </template>
@@ -311,6 +310,7 @@ export default {
       ticket_info         : false,
       moment              : moment,
       // quantity            : [1],
+      showModal           : true,
       price               : null,
       // total               : 0,
       full_name           : null,
@@ -355,7 +355,8 @@ export default {
 
     // reset form and close modal
     close: function () {
-      /* this.price = null;
+      console.log("close close close close");
+      this.price = null;
       this.quantity = [];
       this.total_price = [];
 
@@ -365,8 +366,9 @@ export default {
         booking_end_date: null,
         start_time: null,
         end_time: null,
-      }) */
+      }) 
 
+      this.openModal = true;
 
       this.showModal = false;
     },
@@ -726,7 +728,6 @@ watch: {
 
 },
   mounted() {
-
     this.showModal = true;
     this.defaultPaymentMethod();
   },

@@ -287,8 +287,6 @@
             :organiser_id="this.organiser_id"
         >
         </ticket-component>
-
-
     </div>
 </template>
 
@@ -299,8 +297,15 @@ import { mapState, mapMutations} from 'vuex';
 import mixinsFilters from '../../../../../../eventmie-pro/resources/js/mixins.js';
 import TicketComponent from './TicketList.vue';
 
-export default {
+Vue.mixin({
+  data: function() {
+    return {
+      reopenModal:false,
+    }
+  }
+})
 
+export default {
     props: [
         'event', 'max_ticket_qty', 'login_user_id',
         'is_admin',
@@ -329,10 +334,8 @@ export default {
             all_dates           : [],
             selected_dates      : [],
             available_dates     : [],
-
             moment              : moment,
             calculate_months    : [],
-            
             // local_time       
             local_from_date    : [],
             local_to_date      : [],
@@ -766,9 +769,7 @@ export default {
                     }
                 }
             } 
-console.log("hjnf");
-console.log($this.booked_tickets);
-      console.log(this.organiser_id);
+        
 
             // only return total_available in case of any booked ticket on a schedule.
             // calculate total_capacity - total_booked for each schedule
@@ -788,7 +789,9 @@ console.log($this.booked_tickets);
 
     },
     mounted() {
-        
+        console.log("hjnf booked_tickets");
+        console.log(this.booked_tickets);
+        console.log(this.organiser_id);
         if(this.event.repetitive > 0)
             this.getEventSchedule();
     },  

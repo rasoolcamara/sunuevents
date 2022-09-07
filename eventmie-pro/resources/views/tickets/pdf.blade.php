@@ -130,7 +130,7 @@
                                 <tr>
                                     <td class="text-left">
                                         <img src="{{ $img_path.'/storage/extras/identity.png' }}" style="width: 24px;">
-                                        <p>{{ ucfirst($booking['customer_name']) }}</p>
+                                        <p>{{ ucfirst($booking['full_name']) }} | {{ ucfirst($booking['phone']) }}</p>
                                     </td>
                                 </tr>
                                 <tr>

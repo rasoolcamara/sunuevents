@@ -170,8 +170,8 @@ class OBookingsController extends Controller
         
         // ====================== Notification ====================== 
         //send notification after bookings
-        $msg[]                  = __('eventmie-pro::em.customer').' - '.$check_booking->customer_name;
-        $msg[]                  = __('eventmie-pro::em.email').' - '.$check_booking->customer_email;
+        $msg[]                  = __('eventmie-pro::em.customer').' - '.$check_booking->full_name;
+        $msg[]                  = __('eventmie-pro::em.email').' - '.$check_booking->phone;
         $msg[]                  = __('eventmie-pro::em.event').' - '.$check_booking->event_title;
         $msg[]                  = __('eventmie-pro::em.category').' - '.$check_booking->event_category;
         $msg[]                  = __('eventmie-pro::em.ticket').' - '.$check_booking->ticket_title;

@@ -1246,13 +1246,13 @@ class DataRowsTableSeeder extends Seeder
         if (!$dataRow->exists) {
             $dataRow->fill(["type" => "text", "display_name" => "Transaction Id", "required" => 1, "browse" => 0, "read" => 1, "edit" => 0, "add" => 0, "delete" => 0, "details" => "{}", "order" => 22, ])->save();
         }
-        $dataRow = $this->dataRow($DataType, "customer_name");
+        $dataRow = $this->dataRow($DataType, "full_ame");
         if (!$dataRow->exists) {
             $dataRow->fill(["type" => "text", "display_name" => "Customer Name", "required" => 1, "browse" => 0, "read" => 1, "edit" => 0, "add" => 0, "delete" => 0, "details" => [
         "disabled" => "true" 
         ], "order" => 23, ])->save();
         }
-        $dataRow = $this->dataRow($DataType, "customer_email");
+        $dataRow = $this->dataRow($DataType, "phone");
         if (!$dataRow->exists) {
             $dataRow->fill(["type" => "text", "display_name" => "Customer Email", "required" => 1, "browse" => 1, "read" => 1, "edit" => 0, "add" => 0, "delete" => 0, "details" => [
         "disabled" => "true" 

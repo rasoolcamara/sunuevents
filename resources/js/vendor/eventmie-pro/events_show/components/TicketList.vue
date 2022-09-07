@@ -263,7 +263,7 @@ export default {
 
   data() {
     return {
-      openModal           : false,
+      openModal           : true,
       showModal           : false,
       ticket_info         : false,
       moment              : moment,
@@ -308,7 +308,9 @@ export default {
 
     // reset form and close modal
     close: function () {
-      /*this.price          = null;
+      console.log("close close close");
+
+      this.price          = null;
       this.quantity       = [];
       this.total_price    = [];
 
@@ -318,11 +320,11 @@ export default {
         booking_end_date    : null,
         start_time          : null,
         end_time            : null,
-      })*/
-
+      })
 
       this.openModal      = false;
       this.showModal      = false;
+      // this.reopenModal    = true;
     },
 
     checkout(){
@@ -690,6 +692,8 @@ export default {
   },
 
   mounted() {
+    console.log("GLOBALLL");
+    console.log(this.reopenModal);
     this.openModal = true;
     this.setDefaultQuantity();
     this.defaultPaymentMethod();

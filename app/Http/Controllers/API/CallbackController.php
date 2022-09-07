@@ -88,6 +88,21 @@ class CallbackController extends BaseBookingsController
         return success_redirect($msg, $url);
     }
 
+    public function om_senegal_cancel_url(Request $request)
+    {
+        logger("Le cancel url de om");
+        logger($request->all());
+
+        // if customer then redirect to mybookings
+        $url = route('eventmie.mybookings_index');
+
+        // redirect no matter what so that it never turns back
+        $msg = "Paiement annulé avec succès";
+        session()->flash('status', $msg);
+
+        return redirect($url)->with('status', $msg);
+    }
+    
     /**
      *  payment response
      */
@@ -182,7 +197,7 @@ class CallbackController extends BaseBookingsController
 
                 $ticketMsg = TicketMessage::where("booking_id", $booking->id)->where("phone", $booking->phone)->first();
 
-                if (!$ticketMsg) {
+                if ($ticketMsg != null) {
                     $ticket_url = route('eventmie.downloads_index', [$booking->id, $booking->order_number]);
     
                     $message = "Bonjour ".$booking->full_name.", \nVeuillez retrouver le ticket de votre réservation.\n".$ticket_url;

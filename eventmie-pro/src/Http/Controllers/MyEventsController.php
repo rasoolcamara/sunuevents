@@ -971,8 +971,8 @@ class MyEventsController extends Controller
             'event_end_time',
             'event_repetitive',
 
-            'customer_name', 
-            'customer_email', 
+            'full_name', 
+            'phone', 
 
             'order_number',
             'ticket_title',

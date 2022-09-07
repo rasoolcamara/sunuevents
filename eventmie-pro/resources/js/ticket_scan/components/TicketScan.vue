@@ -24,7 +24,7 @@
 
                 <tr>
                 <th>{{ trans('em.customer') }}</th>
-                <td>{{ booking.customer_name }} ( {{booking.customer_email}} )</td>
+                <td>{{ booking.full_name }} ( {{booking.phone}} )</td>
                 </tr>
 
                 <tr>

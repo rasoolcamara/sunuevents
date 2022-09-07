@@ -430,8 +430,6 @@ class BookingsController extends BaseBookingsController
                 $flag['error']              = $invoice->getStatus();
             }
         }
-
-            // All Exception Handling like error card number
         catch (\Throwable $th)
         {
             // fail case

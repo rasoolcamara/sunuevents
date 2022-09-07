@@ -2941,7 +2941,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 
@@ -2955,6 +2954,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       ticket_info: false,
       moment: moment,
       // quantity            : [1],
+      showModal: true,
       price: null,
       // total               : 0,
       full_name: null,
@@ -2994,16 +2994,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   }, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(['add', 'update'])), {}, {
     // reset form and close modal
     close: function close() {
-      /* this.price = null;
+      console.log("close close close close");
+      this.price = null;
       this.quantity = [];
       this.total_price = [];
-       this.add({
+      this.add({
         booking_date: null,
         booked_date_server: null,
         booking_end_date: null,
         start_time: null,
-        end_time: null,
-      }) */
+        end_time: null
+      });
+      this.openModal = true;
       this.showModal = false;
     },
     bookTickets: function bookTickets() {
@@ -3606,11 +3608,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
 
 
 
+Vue.mixin({
+  data: function data() {
+    return {
+      reopenModal: false
+    };
+  }
+});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['event', 'max_ticket_qty', 'login_user_id', 'is_admin', 'is_organiser', 'is_customer', 'is_paypal', 'is_offline_payment_organizer', 'is_offline_payment_customer', 'tickets', 'total_capacity', 'booked_tickets', 'currency', 'organiser_id'],
   mixins: [_eventmie_pro_resources_js_mixins_js__WEBPACK_IMPORTED_MODULE_1__.default],
@@ -3926,12 +3933,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             }
           }
         }
-      }
-
-      console.log("hjnf");
-      console.log($this.booked_tickets);
-      console.log(this.organiser_id); // only return total_available in case of any booked ticket on a schedule.
+      } // only return total_available in case of any booked ticket on a schedule.
       // calculate total_capacity - total_booked for each schedule
+
 
       if (total_booked > 0) return parseInt(total_capacity_temp) - parseInt(total_booked); // return true as default, or else it'll show filling fast on all dates.
 
@@ -3942,6 +3946,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   mounted: function mounted() {
+    console.log("hjnf booked_tickets");
+    console.log(this.booked_tickets);
+    console.log(this.organiser_id);
     if (this.event.repetitive > 0) this.getEventSchedule();
   }
 });
@@ -4213,7 +4220,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   props: ['tickets', 'max_ticket_qty', 'event', 'currency', 'login_user_id', 'is_admin', 'is_organiser', 'is_customer', 'is_paypal', 'is_offline_payment_organizer', 'is_offline_payment_customer', 'booked_tickets', 'organiser_id'],
   data: function data() {
     return {
-      openModal: false,
+      openModal: true,
       showModal: false,
       ticket_info: false,
       moment: moment,
@@ -4248,18 +4255,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(['add', 'update'])), {}, {
     // reset form and close modal
     close: function close() {
-      /*this.price          = null;
-      this.quantity       = [];
-      this.total_price    = [];
-       this.add({
-        booking_date        : null,
-        booked_date_server  : null,
-        booking_end_date    : null,
-        start_time          : null,
-        end_time            : null,
-      })*/
+      console.log("close close close");
+      this.price = null;
+      this.quantity = [];
+      this.total_price = [];
+      this.add({
+        booking_date: null,
+        booked_date_server: null,
+        booking_end_date: null,
+        start_time: null,
+        end_time: null
+      });
       this.openModal = false;
-      this.showModal = false;
+      this.showModal = false; // this.reopenModal    = true;
     },
     checkout: function checkout() {
       this.openModal = false;
@@ -4546,6 +4554,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   mounted: function mounted() {
+    console.log("GLOBALLL");
+    console.log(this.reopenModal);
     this.openModal = true;
     this.setDefaultQuantity();
     this.defaultPaymentMethod();
@@ -66202,147 +66212,119 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("div", { staticClass: "modal modal-mask" }, [
-      _c("div", { staticClass: "modal-dialog modal-container modal-lg" }, [
-        _c("div", { staticClass: "modal-content" }, [
-          _c("div", { staticClass: "modal-header" }, [
-            _c(
-              "button",
-              {
-                staticClass: "close",
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    return _vm.close()
-                  }
-                }
-              },
-              [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "text-center" }, [
-              _c("h3", { staticClass: "title ticket-selected-text mb-4" }, [
-                _vm._v(_vm._s(_vm.trans("em.checkout")))
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c(
-            "form",
-            {
-              ref: "form",
-              attrs: { method: "POST" },
-              on: {
-                submit: function($event) {
-                  $event.preventDefault()
-                  return _vm.validateForm($event)
-                }
-              }
-            },
-            [
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "event_id" },
-                domProps: { value: _vm.tickets[0].event_id }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "organiser_id" },
-                domProps: { value: _vm.organiser_id }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "booking_date" },
-                domProps: {
-                  value: _vm.convert_date(
-                    _vm.moment(_vm.booking_date, "dddd LL").format("dddd LL")
-                  )
-                }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "booking_end_date" },
-                domProps: {
-                  value:
-                    _vm.booking_end_date != null &&
-                    typeof _vm.booking_end_date != "undefined"
-                      ? _vm.convert_date(
-                          _vm
-                            .moment(_vm.booking_end_date, "dddd LL")
-                            .locale("en")
-                            .format("dddd LL")
-                        )
-                      : null
-                }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "start_time" },
-                domProps: {
-                  value: _vm.convert_time(_vm.moment(_vm.start_time, "HH:mm a"))
-                }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "end_time" },
-                domProps: {
-                  value: _vm.convert_time(_vm.moment(_vm.end_time, "HH:mm a"))
-                }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                staticClass: "form-control",
-                attrs: { type: "hidden", name: "merge_schedule" },
-                domProps: { value: _vm.event.merge_schedule }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.customer_id,
-                    expression: "customer_id"
-                  },
-                  {
-                    name: "validate",
-                    rawName: "v-validate",
-                    value: "required",
-                    expression: "'required'"
-                  }
-                ],
-                attrs: { type: "hidden", name: "customer_id" },
-                domProps: { value: _vm.customer_id },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.customer_id = $event.target.value
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group row " }, [
+    _vm.showModal
+      ? _c("div", { staticClass: "modal modal-mask" }, [
+          _c("div", { staticClass: "modal-dialog modal-container modal-lg" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
                 _c(
-                  "label",
-                  { staticClass: "col-sm-2 my-0", attrs: { for: "full_name" } },
-                  [_vm._v("Nom Complet")]
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button" },
+                    on: { click: _vm.close }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
                 ),
                 _vm._v(" "),
-                _c("div", { staticClass: "col-sm-10" }, [
+                _c("div", { staticClass: "text-center" }, [
+                  _c("h3", { staticClass: "title ticket-selected-text mb-4" }, [
+                    _vm._v(_vm._s(_vm.trans("em.checkout")))
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "form",
+                {
+                  ref: "form",
+                  attrs: { method: "POST" },
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.validateForm($event)
+                    }
+                  }
+                },
+                [
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "event_id" },
+                    domProps: { value: _vm.tickets[0].event_id }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "organiser_id" },
+                    domProps: { value: _vm.organiser_id }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "booking_date" },
+                    domProps: {
+                      value: _vm.convert_date(
+                        _vm
+                          .moment(_vm.booking_date, "dddd LL")
+                          .format("dddd LL")
+                      )
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "booking_end_date" },
+                    domProps: {
+                      value:
+                        _vm.booking_end_date != null &&
+                        typeof _vm.booking_end_date != "undefined"
+                          ? _vm.convert_date(
+                              _vm
+                                .moment(_vm.booking_end_date, "dddd LL")
+                                .locale("en")
+                                .format("dddd LL")
+                            )
+                          : null
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "start_time" },
+                    domProps: {
+                      value: _vm.convert_time(
+                        _vm.moment(_vm.start_time, "HH:mm a")
+                      )
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "end_time" },
+                    domProps: {
+                      value: _vm.convert_time(
+                        _vm.moment(_vm.end_time, "HH:mm a")
+                      )
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "hidden", name: "merge_schedule" },
+                    domProps: { value: _vm.event.merge_schedule }
+                  }),
+                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.full_name,
-                        expression: "full_name"
+                        value: _vm.customer_id,
+                        expression: "customer_id"
                       },
                       {
                         name: "validate",
@@ -66351,62 +66333,36 @@ var render = function() {
                         expression: "'required'"
                       }
                     ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", id: "full_name", name: "full_name" },
-                    domProps: { value: _vm.full_name },
+                    attrs: { type: "hidden", name: "customer_id" },
+                    domProps: { value: _vm.customer_id },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.full_name = $event.target.value
+                        _vm.customer_id = $event.target.value
                       }
                     }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "form-group row",
-                  attrs: { id: "phone_wrapper" }
-                },
-                [
-                  _c(
-                    "label",
-                    { staticClass: "col-sm-2 my-0", attrs: { for: "phone" } },
-                    [_vm._v("Téléphone")]
-                  ),
+                  }),
                   _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-10 pl-0 pr-0" }, [
+                  _c("div", { staticClass: "form-group row " }, [
                     _c(
-                      "div",
+                      "label",
                       {
-                        staticClass: "col-sm-2 ",
-                        staticStyle: { height: "68px" }
+                        staticClass: "col-sm-2 my-0",
+                        attrs: { for: "full_name" }
                       },
-                      [
-                        _c("vue-country-code", {
-                          attrs: {
-                            disabledFetchingCountry: false,
-                            enabledCountryCode: true,
-                            dropdownOptions: { disabledDialCode: false }
-                          },
-                          on: { onSelect: _vm.onSelect }
-                        })
-                      ],
-                      1
+                      [_vm._v("Nom Complet")]
                     ),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-sm-10 m-0" }, [
+                    _c("div", { staticClass: "col-sm-10" }, [
                       _c("input", {
                         directives: [
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.phone,
-                            expression: "phone"
+                            value: _vm.full_name,
+                            expression: "full_name"
                           },
                           {
                             name: "validate",
@@ -66416,385 +66372,243 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "tel", id: "phone", name: "phone" },
-                        domProps: { value: _vm.phone },
+                        attrs: {
+                          type: "text",
+                          id: "full_name",
+                          name: "full_name"
+                        },
+                        domProps: { value: _vm.full_name },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.phone = $event.target.value
+                            _vm.full_name = $event.target.value
                           }
                         }
                       })
                     ])
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.country_code,
-                    expression: "country_code"
-                  },
-                  {
-                    name: "validate",
-                    rawName: "v-validate",
-                    value: "required",
-                    expression: "'required'"
-                  }
-                ],
-                attrs: { type: "hidden", name: "country_code" },
-                domProps: { value: _vm.country_code },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.country_code = $event.target.value
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.country_dial_code,
-                    expression: "country_dial_code"
-                  },
-                  {
-                    name: "validate",
-                    rawName: "v-validate",
-                    value: "required",
-                    expression: "'required'"
-                  }
-                ],
-                attrs: { type: "hidden", name: "country_dial_code" },
-                domProps: { value: _vm.country_dial_code },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.country_dial_code = $event.target.value
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-md-12" }, [
-                  _c(
-                    "p",
-                    { staticClass: "m-0 lead lead-caption text-center" },
-                    [_vm._v(_vm._s(_vm.trans("em.cart")))]
-                  ),
+                  ]),
                   _vm._v(" "),
-                  _c("ul", { staticClass: "list-group m-0" }, [
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "list-group-item d-flex justify-content-between"
-                      },
-                      [
-                        _c("h6", { staticClass: "my-0" }, [
-                          _c("strong", [
-                            _vm._v(_vm._s(_vm.trans("em.total_tickets")))
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "strong",
-                          {
-                            class: {
-                              "ticket-selected-text":
-                                _vm.bookedTicketsTotal() > 0
-                            }
-                          },
-                          [_vm._v(_vm._s(_vm.bookedTicketsTotal()))]
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "list-group-item d-flex justify-content-between"
-                      },
-                      [
-                        _c("h6", { staticClass: "my-0" }, [
-                          _c("strong", [
-                            _vm._v(_vm._s(_vm.trans("em.total_order")))
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "strong",
-                          {
-                            class: {
-                              "ticket-selected-text":
-                                _vm.bookedTicketsTotal() > 0
-                            }
-                          },
-                          [
-                            _vm._v(_vm._s(this.total) + " "),
-                            _c("small", [_vm._v(_vm._s(_vm.currency))])
-                          ]
-                        )
-                      ]
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _vm.bookedTicketsTotal() > 0
-                  ? _c("div", { staticClass: "col-md-12" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "form-group row",
+                      attrs: { id: "phone_wrapper" }
+                    },
+                    [
                       _c(
-                        "p",
-                        { staticClass: "m-0 lead lead-caption text-center " },
-                        [_vm._v(_vm._s(_vm.trans("em.payment")))]
+                        "label",
+                        {
+                          staticClass: "col-sm-2 my-0",
+                          attrs: { for: "phone" }
+                        },
+                        [_vm._v("Téléphone")]
                       ),
                       _vm._v(" "),
-                      _vm.total <= 0
-                        ? _c("div", { staticClass: "d-block my-3 pl-3" }, [
-                            _c("div", { staticClass: "radio-inline" }, [
-                              _c("input", {
-                                staticClass: "custom-control-input",
-                                attrs: {
-                                  id: "free_order",
-                                  name: "free_order",
-                                  type: "radio",
-                                  checked: ""
+                      _c("div", { staticClass: "col-sm-10 pl-0 pr-0" }, [
+                        _c(
+                          "div",
+                          {
+                            staticClass: "col-sm-2 ",
+                            staticStyle: { height: "68px" }
+                          },
+                          [
+                            _c("vue-country-code", {
+                              attrs: {
+                                enableSearchField: true,
+                                disabledFetchingCountry: false,
+                                enabledCountryCode: true,
+                                onlyCountries: [
+                                  "sn",
+                                  "fr",
+                                  "us",
+                                  "ml",
+                                  "gm",
+                                  "mr",
+                                  "gn"
+                                ],
+                                dropdownOptions: { disabledDialCode: false }
+                              },
+                              on: { onSelect: _vm.onSelect }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-sm-10 m-0" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.phone,
+                                expression: "phone"
+                              },
+                              {
+                                name: "validate",
+                                rawName: "v-validate",
+                                value: "required",
+                                expression: "'required'"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { type: "tel", id: "phone", name: "phone" },
+                            domProps: { value: _vm.phone },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
                                 }
-                              }),
-                              _vm._v(" "),
-                              _c(
-                                "label",
-                                {
-                                  staticClass: "custom-control-label",
-                                  attrs: { for: "free_order" }
-                                },
-                                [
-                                  _vm._v("  "),
-                                  _c("i", {
-                                    staticClass: "fas fa-glass-cheers"
-                                  }),
-                                  _vm._v(
-                                    " " + _vm._s(_vm.trans("em.free")) + " "
-                                  ),
-                                  _c(
-                                    "small",
-                                    { staticClass: "text-lowercase" },
-                                    [
-                                      _vm._v(
-                                        "(" +
-                                          _vm._s(_vm.trans("em.checkout")) +
-                                          "-" +
-                                          _vm._s(_vm.trans("em.free")) +
-                                          " )"
-                                      )
-                                    ]
-                                  )
-                                ]
-                              )
-                            ])
-                          ])
-                        : _c("div", { staticClass: "d-block my-3 pl-3" }, [
-                            _vm.is_admin <= 0 && _vm.is_paypal > 0
-                              ? _c("div", { staticClass: "radio-inline" }, [
+                                _vm.phone = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.country_code,
+                        expression: "country_code"
+                      },
+                      {
+                        name: "validate",
+                        rawName: "v-validate",
+                        value: "required",
+                        expression: "'required'"
+                      }
+                    ],
+                    attrs: { type: "hidden", name: "country_code" },
+                    domProps: { value: _vm.country_code },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.country_code = $event.target.value
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.country_dial_code,
+                        expression: "country_dial_code"
+                      },
+                      {
+                        name: "validate",
+                        rawName: "v-validate",
+                        value: "required",
+                        expression: "'required'"
+                      }
+                    ],
+                    attrs: { type: "hidden", name: "country_dial_code" },
+                    domProps: { value: _vm.country_dial_code },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.country_dial_code = $event.target.value
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-12" }, [
+                      _c(
+                        "p",
+                        { staticClass: "m-0 lead lead-caption text-center" },
+                        [_vm._v(_vm._s(_vm.trans("em.cart")))]
+                      ),
+                      _vm._v(" "),
+                      _c("ul", { staticClass: "list-group m-0" }, [
+                        _c(
+                          "li",
+                          {
+                            staticClass:
+                              "list-group-item d-flex justify-content-between"
+                          },
+                          [
+                            _c("h6", { staticClass: "my-0" }, [
+                              _c("strong", [
+                                _vm._v(_vm._s(_vm.trans("em.total_tickets")))
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "strong",
+                              {
+                                class: {
+                                  "ticket-selected-text":
+                                    _vm.bookedTicketsTotal() > 0
+                                }
+                              },
+                              [_vm._v(_vm._s(_vm.bookedTicketsTotal()))]
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "li",
+                          {
+                            staticClass:
+                              "list-group-item d-flex justify-content-between"
+                          },
+                          [
+                            _c("h6", { staticClass: "my-0" }, [
+                              _c("strong", [
+                                _vm._v(_vm._s(_vm.trans("em.total_order")))
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "strong",
+                              {
+                                class: {
+                                  "ticket-selected-text":
+                                    _vm.bookedTicketsTotal() > 0
+                                }
+                              },
+                              [
+                                _vm._v(_vm._s(this.total) + " "),
+                                _c("small", [_vm._v(_vm._s(_vm.currency))])
+                              ]
+                            )
+                          ]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _vm.bookedTicketsTotal() > 0
+                      ? _c("div", { staticClass: "col-md-12" }, [
+                          _c(
+                            "p",
+                            {
+                              staticClass: "m-0 lead lead-caption text-center "
+                            },
+                            [_vm._v(_vm._s(_vm.trans("em.payment")))]
+                          ),
+                          _vm._v(" "),
+                          _vm.total <= 0
+                            ? _c("div", { staticClass: "d-block my-3 pl-3" }, [
+                                _c("div", { staticClass: "radio-inline" }, [
                                   _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: _vm.payment_method,
-                                        expression: "payment_method"
-                                      }
-                                    ],
                                     staticClass: "custom-control-input",
                                     attrs: {
+                                      id: "free_order",
+                                      name: "free_order",
                                       type: "radio",
-                                      id: "payment_method_paypal",
-                                      name: "payment_method",
-                                      value: "1"
-                                    },
-                                    domProps: {
-                                      checked: _vm._q(_vm.payment_method, "1")
-                                    },
-                                    on: {
-                                      change: function($event) {
-                                        _vm.payment_method = "1"
-                                      }
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _vm._m(0)
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.is_admin <= 0
-                              ? _c(
-                                  "div",
-                                  { staticClass: "col-md-2 col-xs-12" },
-                                  [
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: _vm.payment_method,
-                                          expression: "payment_method"
-                                        }
-                                      ],
-                                      staticClass: "custom-control-input",
-                                      attrs: {
-                                        type: "radio",
-                                        id: "payment_method_WAVE",
-                                        name: "payment_method",
-                                        value: "3"
-                                      },
-                                      domProps: {
-                                        checked: _vm._q(_vm.payment_method, "3")
-                                      },
-                                      on: {
-                                        change: function($event) {
-                                          _vm.payment_method = "3"
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("img", {
-                                      staticClass: "w-50",
-                                      attrs: {
-                                        src: __webpack_require__(/*! ../../../../../../public/images/wave.png */ "./public/images/wave.png").default,
-                                        alt: "wave"
-                                      }
-                                    })
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.is_admin <= 0
-                              ? _c(
-                                  "div",
-                                  { staticClass: " col-md-2 col-xs-12" },
-                                  [
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: _vm.payment_method,
-                                          expression: "payment_method"
-                                        }
-                                      ],
-                                      staticClass: "custom-control-input",
-                                      attrs: {
-                                        type: "radio",
-                                        id: "payment_method_OM",
-                                        name: "payment_method",
-                                        value: "4"
-                                      },
-                                      domProps: {
-                                        checked: _vm._q(_vm.payment_method, "4")
-                                      },
-                                      on: {
-                                        change: function($event) {
-                                          _vm.payment_method = "4"
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("img", {
-                                      staticClass: "w-50",
-                                      attrs: {
-                                        src: __webpack_require__(/*! ../../../../../../public/images/orange_money.png */ "./public/images/orange_money.png").default,
-                                        alt: "wave"
-                                      }
-                                    })
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.is_admin <= 0
-                              ? _c(
-                                  "div",
-                                  { staticClass: "col-md-2 col-xs-12 mt-4" },
-                                  [
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: _vm.payment_method,
-                                          expression: "payment_method"
-                                        }
-                                      ],
-                                      staticClass: "custom-control-input",
-                                      attrs: {
-                                        type: "radio",
-                                        id: "payment_method_Paydunia",
-                                        name: "payment_method",
-                                        value: "2"
-                                      },
-                                      domProps: {
-                                        checked: _vm._q(_vm.payment_method, "2")
-                                      },
-                                      on: {
-                                        change: function($event) {
-                                          _vm.payment_method = "2"
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("img", {
-                                      staticClass: "w-50",
-                                      attrs: {
-                                        src: __webpack_require__(/*! ../../../../../../public/images/visa_mastercard.png */ "./public/images/visa_mastercard.png").default,
-                                        alt: "wave"
-                                      }
-                                    })
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            (_vm.is_organiser > 0 &&
-                              _vm.is_offline_payment_organizer > 0) ||
-                            (_vm.is_customer > 0 &&
-                              _vm.is_offline_payment_customer > 0) ||
-                            _vm.is_admin > 0
-                              ? _c("div", { staticClass: "radio-inline" }, [
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: _vm.payment_method,
-                                        expression: "payment_method"
-                                      }
-                                    ],
-                                    staticClass: "custom-control-input",
-                                    attrs: {
-                                      type: "radio",
-                                      id: "payment_method_offline",
-                                      name: "payment_method",
-                                      value: "offline"
-                                    },
-                                    domProps: {
-                                      checked: _vm._q(
-                                        _vm.payment_method,
-                                        "offline"
-                                      )
-                                    },
-                                    on: {
-                                      change: function($event) {
-                                        _vm.payment_method = "offline"
-                                      }
+                                      checked: ""
                                     }
                                   }),
                                   _vm._v(" "),
@@ -66802,225 +66616,459 @@ var render = function() {
                                     "label",
                                     {
                                       staticClass: "custom-control-label",
-                                      attrs: { for: "payment_method_offline" }
+                                      attrs: { for: "free_order" }
                                     },
                                     [
                                       _vm._v("  "),
                                       _c("i", {
-                                        staticClass: "fas fa-suitcase-rolling"
+                                        staticClass: "fas fa-glass-cheers"
                                       }),
                                       _vm._v(
-                                        " " +
-                                          _vm._s(_vm.trans("em.offline")) +
-                                          " "
+                                        " " + _vm._s(_vm.trans("em.free")) + " "
                                       ),
-                                      _c("small", [
-                                        _vm._v(
-                                          "(" +
-                                            _vm._s(
-                                              _vm.trans("em.cash_on_arrival")
-                                            ) +
-                                            ")"
-                                        )
-                                      ])
+                                      _c(
+                                        "small",
+                                        { staticClass: "text-lowercase" },
+                                        [
+                                          _vm._v(
+                                            "(" +
+                                              _vm._s(_vm.trans("em.checkout")) +
+                                              "-" +
+                                              _vm._s(_vm.trans("em.free")) +
+                                              " )"
+                                          )
+                                        ]
+                                      )
                                     ]
                                   )
                                 ])
-                              : _vm._e()
-                          ])
-                    ])
-                  : _vm._e()
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "row mt-5" }, [
-                _c("div", { staticClass: "col-xs-12" }, [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn lgx-btn btn-block",
-                      class: { disabled: _vm.disable },
-                      attrs: { disabled: _vm.disable, type: "button" },
-                      on: {
-                        click: function($event) {
-                          return _vm.bookTickets()
-                        }
-                      }
-                    },
-                    [
-                      _c("i", { staticClass: "fas fa-cash-register" }),
-                      _vm._v(" " + _vm._s(_vm.trans("em.checkout")))
-                    ]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", [
-                _c("div", { staticClass: "col-md-12 d-none" }, [
-                  _c(
-                    "p",
-                    { staticClass: "mb-0 lead lead-caption text-center" },
-                    [_vm._v(_vm._s(_vm.trans("em.tickets")))]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "ul",
-                    { staticClass: "list-group m-0" },
-                    _vm._l(_vm.tickets, function(item, index) {
-                      return _c(
-                        "li",
-                        {
-                          key: index,
-                          staticClass:
-                            "list-group-item d-flex justify-content-between lh-condensed d-flex-wrap"
-                        },
-                        [
-                          _c("input", {
-                            staticClass: "form-control",
-                            attrs: { type: "hidden", name: "ticket_id[]" },
-                            domProps: { value: item.id }
-                          }),
-                          _vm._v(" "),
-                          _c("input", {
-                            staticClass: "form-control",
-                            attrs: { type: "hidden", name: "ticket_title[]" },
-                            domProps: { value: item.title }
-                          }),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "w-50" }, [
-                            _c("h6", { staticClass: "my-0" }, [
-                              _c("strong", [_vm._v(_vm._s(item.title))])
-                            ]),
-                            _vm._v(" "),
-                            _c("p", { staticClass: "mb-2" }, [
-                              _vm._v(
-                                _vm._s(item.price > 0 ? item.price : "0.00") +
-                                  " "
-                              ),
-                              _c("small", [_vm._v(_vm._s(_vm.currency))])
-                            ]),
-                            _vm._v(" "),
-                            _vm.quantity[index] > 0 &&
-                            item.price > 0 &&
-                            item.taxes.length > 0
-                              ? _c(
-                                  "div",
-                                  { staticClass: "event-tax" },
-                                  _vm._l(item.taxes, function(tax, index1) {
-                                    return _c("div", { key: index1 }, [
-                                      _c("p", [
-                                        _vm._v(
-                                          _vm._s(tax.title) +
-                                            "\n                           "
-                                        ),
-                                        _c("small", [
-                                          _vm._v(
-                                            _vm._s(
-                                              _vm.total_price[index] > 0
-                                                ? _vm.countTax(
-                                                    item.price,
-                                                    tax.rate,
-                                                    tax.rate_type,
-                                                    tax.net_price,
-                                                    _vm.quantity[index]
-                                                  )
-                                                : 0
-                                            )
+                              ])
+                            : _c("div", { staticClass: "d-block my-3 pl-3" }, [
+                                _vm.is_admin <= 0 && _vm.is_paypal > 0
+                                  ? _c("div", { staticClass: "radio-inline" }, [
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.payment_method,
+                                            expression: "payment_method"
+                                          }
+                                        ],
+                                        staticClass: "custom-control-input",
+                                        attrs: {
+                                          type: "radio",
+                                          id: "payment_method_paypal",
+                                          name: "payment_method",
+                                          value: "1"
+                                        },
+                                        domProps: {
+                                          checked: _vm._q(
+                                            _vm.payment_method,
+                                            "1"
                                           )
-                                        ])
-                                      ])
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            _vm.payment_method = "1"
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _vm._m(0)
                                     ])
-                                  }),
-                                  0
-                                )
-                              : _vm._e()
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "w-10 w-20-mobile" }, [
-                            typeof _vm.booked_tickets[
-                              item.id + "-" + _vm.booked_date_server
-                            ] != "undefined"
-                              ? _c("div", [
-                                  _vm.max_ticket_qty <= 100
-                                    ? _c(
-                                        "select",
-                                        {
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.is_admin <= 0
+                                  ? _c(
+                                      "div",
+                                      { staticClass: "col-md-2 col-xs-12" },
+                                      [
+                                        _c("input", {
                                           directives: [
                                             {
                                               name: "model",
                                               rawName: "v-model",
-                                              value: _vm.quantity[index],
-                                              expression: "quantity[index]"
+                                              value: _vm.payment_method,
+                                              expression: "payment_method"
                                             }
                                           ],
-                                          staticClass:
-                                            "form-control form-input-sm",
-                                          attrs: { name: "quantity[]" },
+                                          staticClass: "custom-control-input",
+                                          attrs: {
+                                            type: "radio",
+                                            id: "payment_method_WAVE",
+                                            name: "payment_method",
+                                            value: "3"
+                                          },
+                                          domProps: {
+                                            checked: _vm._q(
+                                              _vm.payment_method,
+                                              "3"
+                                            )
+                                          },
                                           on: {
                                             change: function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
-                                                )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.quantity,
-                                                index,
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
-                                              )
+                                              _vm.payment_method = "3"
                                             }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("img", {
+                                          staticClass: "w-50",
+                                          attrs: {
+                                            src: __webpack_require__(/*! ../../../../../../public/images/wave.png */ "./public/images/wave.png").default,
+                                            alt: "wave"
+                                          }
+                                        })
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.is_admin <= 0
+                                  ? _c(
+                                      "div",
+                                      { staticClass: " col-md-2 col-xs-12" },
+                                      [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.payment_method,
+                                              expression: "payment_method"
+                                            }
+                                          ],
+                                          staticClass: "custom-control-input",
+                                          attrs: {
+                                            type: "radio",
+                                            id: "payment_method_OM",
+                                            name: "payment_method",
+                                            value: "4"
+                                          },
+                                          domProps: {
+                                            checked: _vm._q(
+                                              _vm.payment_method,
+                                              "4"
+                                            )
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              _vm.payment_method = "4"
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("img", {
+                                          staticClass: "w-50",
+                                          attrs: {
+                                            src: __webpack_require__(/*! ../../../../../../public/images/orange_money.png */ "./public/images/orange_money.png").default,
+                                            alt: "wave"
+                                          }
+                                        })
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.is_admin <= 0
+                                  ? _c(
+                                      "div",
+                                      {
+                                        staticClass: "col-md-2 col-xs-12 mt-4"
+                                      },
+                                      [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.payment_method,
+                                              expression: "payment_method"
+                                            }
+                                          ],
+                                          staticClass: "custom-control-input",
+                                          attrs: {
+                                            type: "radio",
+                                            id: "payment_method_Paydunia",
+                                            name: "payment_method",
+                                            value: "2"
+                                          },
+                                          domProps: {
+                                            checked: _vm._q(
+                                              _vm.payment_method,
+                                              "2"
+                                            )
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              _vm.payment_method = "2"
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c("img", {
+                                          staticClass: "w-50",
+                                          attrs: {
+                                            src: __webpack_require__(/*! ../../../../../../public/images/visa_mastercard.png */ "./public/images/visa_mastercard.png").default,
+                                            alt: "wave"
+                                          }
+                                        })
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                (_vm.is_organiser > 0 &&
+                                  _vm.is_offline_payment_organizer > 0) ||
+                                (_vm.is_customer > 0 &&
+                                  _vm.is_offline_payment_customer > 0) ||
+                                _vm.is_admin > 0
+                                  ? _c("div", { staticClass: "radio-inline" }, [
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.payment_method,
+                                            expression: "payment_method"
+                                          }
+                                        ],
+                                        staticClass: "custom-control-input",
+                                        attrs: {
+                                          type: "radio",
+                                          id: "payment_method_offline",
+                                          name: "payment_method",
+                                          value: "offline"
+                                        },
+                                        domProps: {
+                                          checked: _vm._q(
+                                            _vm.payment_method,
+                                            "offline"
+                                          )
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            _vm.payment_method = "offline"
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "label",
+                                        {
+                                          staticClass: "custom-control-label",
+                                          attrs: {
+                                            for: "payment_method_offline"
                                           }
                                         },
                                         [
-                                          _c(
-                                            "option",
+                                          _vm._v("  "),
+                                          _c("i", {
+                                            staticClass:
+                                              "fas fa-suitcase-rolling"
+                                          }),
+                                          _vm._v(
+                                            " " +
+                                              _vm._s(_vm.trans("em.offline")) +
+                                              " "
+                                          ),
+                                          _c("small", [
+                                            _vm._v(
+                                              "(" +
+                                                _vm._s(
+                                                  _vm.trans(
+                                                    "em.cash_on_arrival"
+                                                  )
+                                                ) +
+                                                ")"
+                                            )
+                                          ])
+                                        ]
+                                      )
+                                    ])
+                                  : _vm._e()
+                              ])
+                        ])
+                      : _vm._e()
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row mt-5" }, [
+                    _c("div", { staticClass: "col-xs-12" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn lgx-btn btn-block",
+                          class: { disabled: _vm.disable },
+                          attrs: { disabled: _vm.disable, type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.bookTickets()
+                            }
+                          }
+                        },
+                        [
+                          _c("i", { staticClass: "fas fa-cash-register" }),
+                          _vm._v(" " + _vm._s(_vm.trans("em.checkout")))
+                        ]
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", [
+                    _c("div", { staticClass: "col-md-12 d-none" }, [
+                      _c(
+                        "p",
+                        { staticClass: "mb-0 lead lead-caption text-center" },
+                        [_vm._v(_vm._s(_vm.trans("em.tickets")))]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "ul",
+                        { staticClass: "list-group m-0" },
+                        _vm._l(_vm.tickets, function(item, index) {
+                          return _c(
+                            "li",
+                            {
+                              key: index,
+                              staticClass:
+                                "list-group-item d-flex justify-content-between lh-condensed d-flex-wrap"
+                            },
+                            [
+                              _c("input", {
+                                staticClass: "form-control",
+                                attrs: { type: "hidden", name: "ticket_id[]" },
+                                domProps: { value: item.id }
+                              }),
+                              _vm._v(" "),
+                              _c("input", {
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "hidden",
+                                  name: "ticket_title[]"
+                                },
+                                domProps: { value: item.title }
+                              }),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "w-50" }, [
+                                _c("h6", { staticClass: "my-0" }, [
+                                  _c("strong", [_vm._v(_vm._s(item.title))])
+                                ]),
+                                _vm._v(" "),
+                                _c("p", { staticClass: "mb-2" }, [
+                                  _vm._v(
+                                    _vm._s(
+                                      item.price > 0 ? item.price : "0.00"
+                                    ) + " "
+                                  ),
+                                  _c("small", [_vm._v(_vm._s(_vm.currency))])
+                                ]),
+                                _vm._v(" "),
+                                _vm.quantity[index] > 0 &&
+                                item.price > 0 &&
+                                item.taxes.length > 0
+                                  ? _c(
+                                      "div",
+                                      { staticClass: "event-tax" },
+                                      _vm._l(item.taxes, function(tax, index1) {
+                                        return _c("div", { key: index1 }, [
+                                          _c("p", [
+                                            _vm._v(
+                                              _vm._s(tax.title) +
+                                                "\n                           "
+                                            ),
+                                            _c("small", [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.total_price[index] > 0
+                                                    ? _vm.countTax(
+                                                        item.price,
+                                                        tax.rate,
+                                                        tax.rate_type,
+                                                        tax.net_price,
+                                                        _vm.quantity[index]
+                                                      )
+                                                    : 0
+                                                )
+                                              )
+                                            ])
+                                          ])
+                                        ])
+                                      }),
+                                      0
+                                    )
+                                  : _vm._e()
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "w-10 w-20-mobile" }, [
+                                typeof _vm.booked_tickets[
+                                  item.id + "-" + _vm.booked_date_server
+                                ] != "undefined"
+                                  ? _c("div", [
+                                      _vm.max_ticket_qty <= 100
+                                        ? _c(
+                                            "select",
                                             {
-                                              attrs: {
-                                                value: "0",
-                                                selected: ""
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value: _vm.quantity[index],
+                                                  expression: "quantity[index]"
+                                                }
+                                              ],
+                                              staticClass:
+                                                "form-control form-input-sm",
+                                              attrs: { name: "quantity[]" },
+                                              on: {
+                                                change: function($event) {
+                                                  var $$selectedVal = Array.prototype.filter
+                                                    .call(
+                                                      $event.target.options,
+                                                      function(o) {
+                                                        return o.selected
+                                                      }
+                                                    )
+                                                    .map(function(o) {
+                                                      var val =
+                                                        "_value" in o
+                                                          ? o._value
+                                                          : o.value
+                                                      return val
+                                                    })
+                                                  _vm.$set(
+                                                    _vm.quantity,
+                                                    index,
+                                                    $event.target.multiple
+                                                      ? $$selectedVal
+                                                      : $$selectedVal[0]
+                                                  )
+                                                }
                                               }
                                             },
-                                            [_vm._v("0")]
-                                          ),
-                                          _vm._v(" "),
-                                          _vm._l(
-                                            _vm.booked_tickets[
-                                              item.id +
-                                                "-" +
-                                                _vm.booked_date_server
-                                            ].total_vacant,
-                                            function(itm, ind) {
-                                              return _vm.booked_tickets[
-                                                item.id +
-                                                  "-" +
-                                                  _vm.booked_date_server
-                                              ].total_vacant <=
-                                                _vm.max_ticket_qty
-                                                ? _c(
-                                                    "option",
-                                                    {
-                                                      key: ind,
-                                                      domProps: { value: itm }
-                                                    },
-                                                    [_vm._v(_vm._s(itm))]
-                                                  )
-                                                : _vm._l(
-                                                    item.quantity >
-                                                      _vm.max_ticket_qty
-                                                      ? _vm.max_ticket_qty
-                                                      : item.quantity,
-                                                    function(itm, ind) {
-                                                      return _c(
+                                            [
+                                              _c(
+                                                "option",
+                                                {
+                                                  attrs: {
+                                                    value: "0",
+                                                    selected: ""
+                                                  }
+                                                },
+                                                [_vm._v("0")]
+                                              ),
+                                              _vm._v(" "),
+                                              _vm._l(
+                                                _vm.booked_tickets[
+                                                  item.id +
+                                                    "-" +
+                                                    _vm.booked_date_server
+                                                ].total_vacant,
+                                                function(itm, ind) {
+                                                  return _vm.booked_tickets[
+                                                    item.id +
+                                                      "-" +
+                                                      _vm.booked_date_server
+                                                  ].total_vacant <=
+                                                    _vm.max_ticket_qty
+                                                    ? _c(
                                                         "option",
                                                         {
                                                           key: ind,
@@ -67030,366 +67078,422 @@ var render = function() {
                                                         },
                                                         [_vm._v(_vm._s(itm))]
                                                       )
-                                                    }
-                                                  )
-                                            }
+                                                    : _vm._l(
+                                                        item.quantity >
+                                                          _vm.max_ticket_qty
+                                                          ? _vm.max_ticket_qty
+                                                          : item.quantity,
+                                                        function(itm, ind) {
+                                                          return _c(
+                                                            "option",
+                                                            {
+                                                              key: ind,
+                                                              domProps: {
+                                                                value: itm
+                                                              }
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(itm)
+                                                              )
+                                                            ]
+                                                          )
+                                                        }
+                                                      )
+                                                }
+                                              )
+                                            ],
+                                            2
                                           )
-                                        ],
-                                        2
-                                      )
-                                    : _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.quantity[index],
-                                            expression: "quantity[index]"
-                                          }
-                                        ],
-                                        staticClass:
-                                          "form-control form-input-sm",
-                                        attrs: {
-                                          type: "number",
-                                          name: "quantity[]",
-                                          value: "0",
-                                          min: "0",
-                                          max:
-                                            _vm.booked_tickets[
-                                              item.id +
-                                                "-" +
-                                                _vm.booked_date_server
-                                            ].total_vacant < _vm.max_ticket_qty
-                                              ? _vm.booked_tickets[
-                                                  item.id +
-                                                    "-" +
-                                                    _vm.booked_date_server
-                                                ].total_vacant
-                                              : _vm.max_ticket_qty
-                                        },
-                                        domProps: {
-                                          value: _vm.quantity[index]
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              _vm.quantity,
-                                              index,
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      }),
-                                  _vm._v(" "),
-                                  _vm.booked_tickets[
-                                    item.id + "-" + _vm.booked_date_server
-                                  ].total_vacant < _vm.max_ticket_qty &&
-                                  _vm.booked_tickets[
-                                    item.id + "-" + _vm.booked_date_server
-                                  ].total_vacant > 0
-                                    ? _c("p", { staticClass: "text-info" }, [
-                                        _c("small", [
-                                          _c("i", {
-                                            staticClass: "fas fa-exclamation"
-                                          }),
-                                          _vm._v(
-                                            " " +
-                                              _vm._s(_vm.trans("em.vacant")) +
-                                              "\n                           " +
-                                              _vm._s(
+                                        : _c("input", {
+                                            directives: [
+                                              {
+                                                name: "model",
+                                                rawName: "v-model",
+                                                value: _vm.quantity[index],
+                                                expression: "quantity[index]"
+                                              }
+                                            ],
+                                            staticClass:
+                                              "form-control form-input-sm",
+                                            attrs: {
+                                              type: "number",
+                                              name: "quantity[]",
+                                              value: "0",
+                                              min: "0",
+                                              max:
                                                 _vm.booked_tickets[
                                                   item.id +
                                                     "-" +
                                                     _vm.booked_date_server
-                                                ].total_vacant
-                                              )
-                                          )
-                                        ])
-                                      ])
-                                    : _vm._e(),
-                                  _vm._v(" "),
-                                  _vm.booked_tickets[
-                                    item.id + "-" + _vm.booked_date_server
-                                  ].total_vacant < _vm.max_ticket_qty &&
-                                  _vm.booked_tickets[
-                                    item.id + "-" + _vm.booked_date_server
-                                  ].total_vacant <= 0
-                                    ? _c("p", { staticClass: "text-danger" }, [
-                                        _c("small", [
-                                          _c("i", {
-                                            staticClass: "fas fa-times-circle"
-                                          }),
-                                          _vm._v(
-                                            "  " +
-                                              _vm._s(_vm.trans("em.vacant")) +
-                                              " 0"
-                                          )
-                                        ])
-                                      ])
-                                    : _vm._e()
-                                ])
-                              : _c("div", [
-                                  _vm.max_ticket_qty <= 100
-                                    ? _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model",
-                                              value: _vm.quantity[index],
-                                              expression: "quantity[index]"
-                                            }
-                                          ],
-                                          staticClass:
-                                            "form-control form-input-sm",
-                                          attrs: { name: "quantity[]" },
-                                          on: {
-                                            change: function($event) {
-                                              var $$selectedVal = Array.prototype.filter
-                                                .call(
-                                                  $event.target.options,
-                                                  function(o) {
-                                                    return o.selected
-                                                  }
+                                                ].total_vacant <
+                                                _vm.max_ticket_qty
+                                                  ? _vm.booked_tickets[
+                                                      item.id +
+                                                        "-" +
+                                                        _vm.booked_date_server
+                                                    ].total_vacant
+                                                  : _vm.max_ticket_qty
+                                            },
+                                            domProps: {
+                                              value: _vm.quantity[index]
+                                            },
+                                            on: {
+                                              input: function($event) {
+                                                if ($event.target.composing) {
+                                                  return
+                                                }
+                                                _vm.$set(
+                                                  _vm.quantity,
+                                                  index,
+                                                  $event.target.value
                                                 )
-                                                .map(function(o) {
-                                                  var val =
-                                                    "_value" in o
-                                                      ? o._value
-                                                      : o.value
-                                                  return val
-                                                })
-                                              _vm.$set(
-                                                _vm.quantity,
-                                                index,
-                                                $event.target.multiple
-                                                  ? $$selectedVal
-                                                  : $$selectedVal[0]
-                                              )
+                                              }
                                             }
-                                          }
-                                        },
-                                        [
-                                          _c(
-                                            "option",
+                                          }),
+                                      _vm._v(" "),
+                                      _vm.booked_tickets[
+                                        item.id + "-" + _vm.booked_date_server
+                                      ].total_vacant < _vm.max_ticket_qty &&
+                                      _vm.booked_tickets[
+                                        item.id + "-" + _vm.booked_date_server
+                                      ].total_vacant > 0
+                                        ? _c(
+                                            "p",
+                                            { staticClass: "text-info" },
+                                            [
+                                              _c("small", [
+                                                _c("i", {
+                                                  staticClass:
+                                                    "fas fa-exclamation"
+                                                }),
+                                                _vm._v(
+                                                  " " +
+                                                    _vm._s(
+                                                      _vm.trans("em.vacant")
+                                                    ) +
+                                                    "\n                           " +
+                                                    _vm._s(
+                                                      _vm.booked_tickets[
+                                                        item.id +
+                                                          "-" +
+                                                          _vm.booked_date_server
+                                                      ].total_vacant
+                                                    )
+                                                )
+                                              ])
+                                            ]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.booked_tickets[
+                                        item.id + "-" + _vm.booked_date_server
+                                      ].total_vacant < _vm.max_ticket_qty &&
+                                      _vm.booked_tickets[
+                                        item.id + "-" + _vm.booked_date_server
+                                      ].total_vacant <= 0
+                                        ? _c(
+                                            "p",
+                                            { staticClass: "text-danger" },
+                                            [
+                                              _c("small", [
+                                                _c("i", {
+                                                  staticClass:
+                                                    "fas fa-times-circle"
+                                                }),
+                                                _vm._v(
+                                                  "  " +
+                                                    _vm._s(
+                                                      _vm.trans("em.vacant")
+                                                    ) +
+                                                    " 0"
+                                                )
+                                              ])
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ])
+                                  : _c("div", [
+                                      _vm.max_ticket_qty <= 100
+                                        ? _c(
+                                            "select",
                                             {
-                                              attrs: {
-                                                value: "0",
-                                                selected: ""
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value: _vm.quantity[index],
+                                                  expression: "quantity[index]"
+                                                }
+                                              ],
+                                              staticClass:
+                                                "form-control form-input-sm",
+                                              attrs: { name: "quantity[]" },
+                                              on: {
+                                                change: function($event) {
+                                                  var $$selectedVal = Array.prototype.filter
+                                                    .call(
+                                                      $event.target.options,
+                                                      function(o) {
+                                                        return o.selected
+                                                      }
+                                                    )
+                                                    .map(function(o) {
+                                                      var val =
+                                                        "_value" in o
+                                                          ? o._value
+                                                          : o.value
+                                                      return val
+                                                    })
+                                                  _vm.$set(
+                                                    _vm.quantity,
+                                                    index,
+                                                    $event.target.multiple
+                                                      ? $$selectedVal
+                                                      : $$selectedVal[0]
+                                                  )
+                                                }
                                               }
                                             },
-                                            [_vm._v("0")]
-                                          ),
-                                          _vm._v(" "),
-                                          _vm._l(
-                                            item.quantity > _vm.max_ticket_qty
-                                              ? _vm.max_ticket_qty
-                                              : item.quantity,
-                                            function(itm, ind) {
-                                              return _c(
+                                            [
+                                              _c(
                                                 "option",
                                                 {
-                                                  key: ind,
-                                                  domProps: { value: itm }
+                                                  attrs: {
+                                                    value: "0",
+                                                    selected: ""
+                                                  }
                                                 },
-                                                [_vm._v(_vm._s(itm))]
+                                                [_vm._v("0")]
+                                              ),
+                                              _vm._v(" "),
+                                              _vm._l(
+                                                item.quantity >
+                                                  _vm.max_ticket_qty
+                                                  ? _vm.max_ticket_qty
+                                                  : item.quantity,
+                                                function(itm, ind) {
+                                                  return _c(
+                                                    "option",
+                                                    {
+                                                      key: ind,
+                                                      domProps: { value: itm }
+                                                    },
+                                                    [_vm._v(_vm._s(itm))]
+                                                  )
+                                                }
                                               )
-                                            }
+                                            ],
+                                            2
                                           )
-                                        ],
-                                        2
-                                      )
-                                    : _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value: _vm.quantity[index],
-                                            expression: "quantity[index]"
-                                          }
-                                        ],
+                                        : _c("input", {
+                                            directives: [
+                                              {
+                                                name: "model",
+                                                rawName: "v-model",
+                                                value: _vm.quantity[index],
+                                                expression: "quantity[index]"
+                                              }
+                                            ],
+                                            staticClass:
+                                              "form-control form-input-sm",
+                                            attrs: {
+                                              type: "number",
+                                              name: "quantity[]",
+                                              value: "0",
+                                              min: "0",
+                                              max:
+                                                item.quantity >
+                                                _vm.max_ticket_qty
+                                                  ? _vm.max_ticket_qty
+                                                  : item.quantity
+                                            },
+                                            domProps: {
+                                              value: _vm.quantity[index]
+                                            },
+                                            on: {
+                                              input: function($event) {
+                                                if ($event.target.composing) {
+                                                  return
+                                                }
+                                                _vm.$set(
+                                                  _vm.quantity,
+                                                  index,
+                                                  $event.target.value
+                                                )
+                                              }
+                                            }
+                                          }),
+                                      _vm._v(" "),
+                                      item.quantity < _vm.max_ticket_qty &&
+                                      item.quantity > 0
+                                        ? _c(
+                                            "p",
+                                            { staticClass: "text-info" },
+                                            [
+                                              _c("small", [
+                                                _c("i", {
+                                                  staticClass:
+                                                    "fas fa-exclamation"
+                                                }),
+                                                _vm._v(
+                                                  " " +
+                                                    _vm._s(
+                                                      _vm.trans("em.vacant")
+                                                    ) +
+                                                    "\n                           " +
+                                                    _vm._s(item.quantity)
+                                                )
+                                              ])
+                                            ]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      item.quantity <= 0
+                                        ? _c(
+                                            "p",
+                                            { staticClass: "text-danger" },
+                                            [
+                                              _c("small", [
+                                                _c("i", {
+                                                  staticClass:
+                                                    "fas fa-times-circle"
+                                                }),
+                                                _vm._v(
+                                                  "  " +
+                                                    _vm._s(
+                                                      _vm.trans("em.vacant")
+                                                    ) +
+                                                    " 0"
+                                                )
+                                              ])
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ])
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "w-30 text-right" }, [
+                                _c("strong", [
+                                  _vm._v(
+                                    "\n                       " +
+                                      _vm._s(
+                                        _vm.total_price[index]
+                                          ? _vm.total_price[index]
+                                          : "0.00"
+                                      ) +
+                                      "\n                       "
+                                  ),
+                                  _c("small", [_vm._v(_vm._s(_vm.currency))])
+                                ]),
+                                _vm._v(" "),
+                                _vm.quantity[index] > 0
+                                  ? _c("p", [
+                                      _c("i", {
                                         staticClass:
-                                          "form-control form-input-sm",
-                                        attrs: {
-                                          type: "number",
-                                          name: "quantity[]",
-                                          value: "0",
-                                          min: "0",
-                                          max:
-                                            item.quantity > _vm.max_ticket_qty
-                                              ? _vm.max_ticket_qty
-                                              : item.quantity
-                                        },
-                                        domProps: {
-                                          value: _vm.quantity[index]
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              _vm.quantity,
-                                              index,
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      }),
-                                  _vm._v(" "),
-                                  item.quantity < _vm.max_ticket_qty &&
-                                  item.quantity > 0
-                                    ? _c("p", { staticClass: "text-info" }, [
-                                        _c("small", [
-                                          _c("i", {
-                                            staticClass: "fas fa-exclamation"
-                                          }),
+                                          "fas fa-check-circle ticket-selected-text"
+                                      })
+                                    ])
+                                  : _vm._e()
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "break-flex" }, [
+                                _c(
+                                  "a",
+                                  {
+                                    staticClass: "pointer ticket-info-toggle",
+                                    on: {
+                                      click: function($event) {
+                                        _vm.ticket_info = !_vm.ticket_info
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm.ticket_info
+                                      ? _c("small", [
                                           _vm._v(
-                                            " " +
-                                              _vm._s(_vm.trans("em.vacant")) +
-                                              "\n                           " +
-                                              _vm._s(item.quantity)
+                                            _vm._s(_vm.trans("em.hide_info"))
                                           )
                                         ])
-                                      ])
-                                    : _vm._e(),
-                                  _vm._v(" "),
-                                  item.quantity <= 0
-                                    ? _c("p", { staticClass: "text-danger" }, [
-                                        _c("small", [
-                                          _c("i", {
-                                            staticClass: "fas fa-times-circle"
-                                          }),
+                                      : _c("small", [
                                           _vm._v(
-                                            "  " +
-                                              _vm._s(_vm.trans("em.vacant")) +
-                                              " 0"
+                                            _vm._s(_vm.trans("em.show_info"))
                                           )
                                         ])
-                                      ])
-                                    : _vm._e()
-                                ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "w-30 text-right" }, [
-                            _c("strong", [
-                              _vm._v(
-                                "\n                       " +
-                                  _vm._s(
-                                    _vm.total_price[index]
-                                      ? _vm.total_price[index]
-                                      : "0.00"
-                                  ) +
-                                  "\n                       "
-                              ),
-                              _c("small", [_vm._v(_vm._s(_vm.currency))])
-                            ]),
-                            _vm._v(" "),
-                            _vm.quantity[index] > 0
-                              ? _c("p", [
-                                  _c("i", {
-                                    staticClass:
-                                      "fas fa-check-circle ticket-selected-text"
-                                  })
-                                ])
-                              : _vm._e()
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "break-flex" }, [
-                            _c(
-                              "a",
-                              {
-                                staticClass: "pointer ticket-info-toggle",
-                                on: {
-                                  click: function($event) {
-                                    _vm.ticket_info = !_vm.ticket_info
-                                  }
-                                }
-                              },
-                              [
+                                  ]
+                                ),
+                                _vm._v(" "),
                                 _vm.ticket_info
-                                  ? _c("small", [
-                                      _vm._v(_vm._s(_vm.trans("em.hide_info")))
+                                  ? _c("p", { staticClass: "ticket-info" }, [
+                                      _vm._v(_vm._s(item.description))
                                     ])
-                                  : _c("small", [
-                                      _vm._v(_vm._s(_vm.trans("em.show_info")))
-                                    ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _vm.ticket_info
-                              ? _c("p", { staticClass: "ticket-info" }, [
-                                  _vm._v(_vm._s(item.description))
-                                ])
-                              : _vm._e()
-                          ])
-                        ]
+                                  : _vm._e()
+                              ])
+                            ]
+                          )
+                        }),
+                        0
                       )
-                    }),
-                    0
-                  )
-                ])
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "form",
-            {
-              ref: "form_om",
-              attrs: {
-                action: "https://api.paiementorangemoney.com",
-                method: "POST"
-              }
-            },
-            [
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_IDENTIFIANT" },
-                domProps: { value: _vm.om_config.identifiant }
-              }),
+                    ])
+                  ])
+                ]
+              ),
               _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_SITE" },
-                domProps: { value: _vm.om_config.site }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_TOTAL" },
-                domProps: { value: 200 }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_REF_COMMANDE" },
-                domProps: { value: _vm.om_config.ref_commande }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_COMMANDE" },
-                domProps: { value: _vm.om_config.commande }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_DATEH" },
-                domProps: { value: _vm.om_config.dateh }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_HTYPE" },
-                domProps: { value: _vm.om_config.algo }
-              }),
-              _vm._v(" "),
-              _c("input", {
-                attrs: { type: "hidden", name: "S2M_HMAC" },
-                domProps: { value: _vm.om_config.hmac }
-              })
-            ]
-          )
+              _c(
+                "form",
+                {
+                  ref: "form_om",
+                  attrs: {
+                    action: "https://api.paiementorangemoney.com",
+                    method: "POST"
+                  }
+                },
+                [
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_IDENTIFIANT" },
+                    domProps: { value: _vm.om_config.identifiant }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_SITE" },
+                    domProps: { value: _vm.om_config.site }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_TOTAL" },
+                    domProps: { value: _vm.om_config.total }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_REF_COMMANDE" },
+                    domProps: { value: _vm.om_config.ref_commande }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_COMMANDE" },
+                    domProps: { value: _vm.om_config.commande }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_DATEH" },
+                    domProps: { value: _vm.om_config.dateh }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_HTYPE" },
+                    domProps: { value: _vm.om_config.algo }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    attrs: { type: "hidden", name: "S2M_HMAC" },
+                    domProps: { value: _vm.om_config.hmac }
+                  })
+                ]
+              )
+            ])
+          ])
         ])
-      ])
-    ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = [

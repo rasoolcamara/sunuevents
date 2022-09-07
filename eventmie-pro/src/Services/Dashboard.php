@@ -182,7 +182,7 @@ class Dashboard extends Controller
         {
             $csvData[$key][__('voyager::generic.Event')]    = $item['event_title'];
             $csvData[$key][__('voyager::generic.Timing')]   = $item['event_start_date'] .' - '. $item['event_end_date'];
-            $csvData[$key][__('voyager::generic.Customer')]  = $item['customer_name'].' ('.$item['customer_email'].')';
+            $csvData[$key][__('voyager::generic.Customer')]  = $item['full_name'].' ('.$item['phone'].')';
             $csvData[$key][ __('voyager::generic.Booking').' '. __('voyager::generic.Date')]  = $item['booking_on'];
             $csvData[$key][ __('voyager::generic.Booking').' '. __('voyager::generic.Date')]  = $item['booking_on'];
             

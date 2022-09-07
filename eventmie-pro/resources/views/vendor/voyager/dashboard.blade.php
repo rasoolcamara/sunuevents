@@ -311,7 +311,7 @@ function sales_report(ticket_id = null) {
                 return row.event_start_date +' - <p>'+ row.event_end_date+'</p>';
             }},
             { data: 'customer_name',   name: 'customer_name' ,render:function(data, type, row){
-                return row.customer_name +' <p>('+ row.customer_email+')</p>';
+                return row.full_name +' <p>('+ row.phone+')</p>';
             }},
             { data: 'created_at',         name: 'created_at',render:function(data, type, row){
                 

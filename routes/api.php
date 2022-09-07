@@ -20,3 +20,5 @@ Route::post('/wave-callback', [CallbackController::class, 'wave_callback'])->nam
 
 Route::post('/omsenegal-callback', [CallbackController::class, 'om_senegal_callback'])->name('om_senegal_callback');
 Route::post('/omsenegal-return-url', [CallbackController::class, 'om_senegal_return_url']);
+Route::post('/omsenegal-cancel-url', [CallbackController::class, 'om_senegal_cancel_url']);
+

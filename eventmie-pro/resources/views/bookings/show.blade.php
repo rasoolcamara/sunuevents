@@ -129,12 +129,12 @@
                                 <table class="table table-striped table-hover">
                                     <tr>
                                         <th>@lang('eventmie-pro::em.name')</th>
-                                        <td>{{$booking['customer_name']}}</td>
+                                        <td>{{$booking['full_name']}}</td>
                                     </tr>
 
                                     <tr>
                                         <th>@lang('eventmie-pro::em.email')</th>
-                                        <td>{{$booking['customer_email']}}</td>
+                                        <td>{{$booking['phone']}}</td>
                                     </tr>
 
                                 </table>
